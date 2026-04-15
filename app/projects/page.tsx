@@ -1,45 +1,246 @@
 import type { Metadata } from "next";
 import { fetchProjects } from "@/lib/notion";
-import { ProjectGrid } from "@/components/projects/project-grid";
-import { SectionLabel } from "@/components/ui/section-label";
-import { TerminalWindow } from "@/components/ui/terminal-window";
-import { StatusDot } from "@/components/ui/status-dot";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "REGISTRY // Technical Manifest",
-  description: "Projects and open source work — infrastructure, systems, and tooling.",
+  description: "Deployed systems, open source nodes, and infrastructure projects.",
+};
+
+const statusStyles = {
+  online:  { badge: "bg-primary/5 border-primary/20 text-primary",   label: "STABLE",      hover: "group-hover:opacity-100 bg-primary" },
+  warn:    { badge: "bg-tertiary/5 border-tertiary/20 text-tertiary", label: "COMPUTING",   hover: "group-hover:opacity-100 bg-tertiary" },
+  offline: { badge: "bg-error/5 border-error/20 text-error",         label: "MAINTENANCE", hover: "group-hover:opacity-100 bg-error" },
 };
 
 export default async function ProjectsPage() {
   const projects = await fetchProjects();
-  const online = projects.filter((p) => p.status === "online").length;
-  const featured = projects.filter((p) => p.featured).length;
+  const online  = projects.filter((p) => p.status === "online").length;
+  const avgLatency = "14ms";
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-10">
+    <div className="mt-12 mb-10 p-8 min-h-screen">
+      <div className="max-w-7xl mx-auto">
 
-      {/* ─── Header ───────────────────────────────────────────────── */}
-      <section className="space-y-3">
-        <SectionLabel>registry / technical_manifest</SectionLabel>
-        <h1 className="text-2xl sm:text-3xl font-bold font-sans text-white">
-          Technical Manifest
-        </h1>
-
-        <TerminalWindow title="registry — status">
-          <div className="p-3 font-mono text-[10px] flex flex-wrap gap-6 text-[#adaaaa]">
-            <span>total: <span className="text-white">{projects.length}</span></span>
-            <span className="flex items-center gap-1.5">
-              <StatusDot status="online" animate />
-              <span>online: <span className="text-[#55fe7e]">{online}</span></span>
-            </span>
-            <span>featured: <span className="text-[#5db4fe]">{featured}</span></span>
+        {/* ─── Breadcrumb / Header ────────────────────────────────── */}
+        <div className="mb-12">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-primary mb-2 opacity-80">
+            <span className="bg-primary/10 px-2 py-0.5">AUTH: ROOT</span>
+            <span className="opacity-30">/</span>
+            <span className="bg-[#262626] px-2 py-0.5">STATUS: SYSTEM_READY</span>
           </div>
-        </TerminalWindow>
-      </section>
+          <h1 className="font-sans text-5xl md:text-7xl font-bold tracking-tighter text-white mb-4">
+            DEPLOYED_SYSTEMS /{" "}
+            <span className="text-primary/40">NODES</span>
+          </h1>
+          <div className="h-1 w-24 bg-primary" />
+        </div>
 
-      {/* ─── Project Grid ─────────────────────────────────────────── */}
-      <ProjectGrid projects={projects} />
+        {/* ─── Dashboard Stats Strip ──────────────────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-surface-container-low p-4 border-l border-primary">
+            <div className="text-[10px] text-on-surface-variant mb-1">TOTAL_UPTIME</div>
+            <div className="font-sans text-2xl font-bold">99.999%</div>
+          </div>
+          <div className="bg-surface-container-low p-4 border-l border-tertiary">
+            <div className="text-[10px] text-on-surface-variant mb-1">ACTIVE_NODES</div>
+            <div className="font-sans text-2xl font-bold">{online}</div>
+          </div>
+          <div className="bg-surface-container-low p-4 border-l border-secondary">
+            <div className="text-[10px] text-on-surface-variant mb-1">NETWORK_LATENCY</div>
+            <div className="font-sans text-2xl font-bold">{avgLatency}</div>
+          </div>
+          <div className="bg-surface-container-low p-4 border-l border-error">
+            <div className="text-[10px] text-on-surface-variant mb-1">THREAT_LEVEL</div>
+            <div className="font-sans text-2xl font-bold">MINIMAL</div>
+          </div>
+        </div>
 
+        {/* ─── Project Cards Grid ─────────────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {projects.length === 0 ? <FallbackCards /> : projects.map((project, i) => {
+            const status = statusStyles[project.status] ?? statusStyles.online;
+            const accentColors = ["bg-primary", "bg-tertiary", "bg-secondary", "bg-error"];
+            const accent = accentColors[i % accentColors.length];
+            return (
+              <div key={project.id} className="bg-surface-container-low group relative overflow-hidden">
+                {/* Hover accent strip */}
+                <div className={`absolute top-0 left-0 w-1 h-full ${accent} opacity-0 group-hover:opacity-100 transition-opacity`} />
+
+                {/* Terminal header */}
+                <div className="h-8 bg-surface-container-high px-4 flex items-center justify-between border-b border-[#494847]/10">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-error/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-secondary/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary/50" />
+                  </div>
+                  <div className="text-[10px] font-bold text-on-surface-variant/50 tracking-widest">
+                    NODE_SPEC_{String(i + 1).padStart(3, "0")}
+                  </div>
+                </div>
+
+                {/* Card body */}
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h3 className="font-sans text-2xl font-bold mb-1 uppercase">
+                        {project.title}
+                      </h3>
+                      <p className="text-[10px] text-primary/60 font-bold">
+                        $ node_id: 0x{project.id.slice(0, 4).toUpperCase()}-ALPHA
+                      </p>
+                    </div>
+                    <div className={`px-2 py-1 border text-[10px] font-bold ${status.badge}`}>
+                      {status.label}
+                    </div>
+                  </div>
+
+                  {/* Data table */}
+                  <div className="space-y-3 mb-8">
+                    {project.tags.length > 0 && (
+                      <div className="grid grid-cols-3 text-[10px] py-2 border-b border-[#494847]/10">
+                        <span className="text-on-surface-variant">STACK</span>
+                        <span className="col-span-2 font-bold text-tertiary tracking-wider">
+                          {project.tags.join(" / ")}
+                        </span>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-3 text-[10px] py-2 border-b border-[#494847]/10">
+                      <span className="text-on-surface-variant">STATUS</span>
+                      <span className="col-span-2 font-bold text-white tracking-wider uppercase">
+                        {project.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 text-[10px] py-2">
+                      <span className="text-on-surface-variant">MISSION_OBJ</span>
+                      <span className="col-span-2 text-on-surface-variant leading-relaxed italic">
+                        {project.description || "—"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex gap-3">
+                    {project.github && (
+                      <Link
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 bg-[#262626] border border-[#494847]/20 py-2 text-[10px] font-bold text-primary hover:bg-primary hover:text-on-primary transition-colors text-center"
+                      >
+                        ./view_source
+                      </Link>
+                    )}
+                    {project.live && (
+                      <Link
+                        href={project.live}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 bg-[#262626] border border-[#494847]/20 py-2 text-[10px] font-bold text-secondary hover:border-secondary transition-colors text-center"
+                      >
+                        ssh connect --root
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Add New Node placeholder */}
+          <div className="bg-[#000000] border border-dashed border-[#494847]/30 flex flex-col items-center justify-center p-12 group cursor-pointer hover:border-primary/50 transition-all">
+            <span className="material-symbols-outlined text-4xl text-[#494847] group-hover:text-primary mb-4">add_circle</span>
+            <div className="font-sans text-lg font-bold text-[#494847] group-hover:text-white uppercase tracking-tighter">
+              Initialize New Node
+            </div>
+            <div className="text-[10px] text-[#494847] mt-2">$ kernel_init --new-process</div>
+          </div>
+        </div>
+
+        {/* ─── Terminal Log Footer ───────────────────────────────── */}
+        <div className="mt-12 bg-black p-4 border border-[#494847]/10 font-mono text-[10px]">
+          <div className="flex items-center gap-2 mb-2 text-primary border-b border-primary/20 pb-1">
+            <span className="material-symbols-outlined text-xs">terminal</span>
+            <span>LIVE_SYSTEM_OUTPUT</span>
+          </div>
+          <div className="space-y-1 opacity-70">
+            <div className="flex gap-4">
+              <span className="text-[#494847]">[14:02:11]</span>
+              <span className="text-secondary">INFO</span>
+              <span>Nodes synchronized with master registry.</span>
+            </div>
+            <div className="flex gap-4">
+              <span className="text-[#494847]">[14:02:45]</span>
+              <span className="text-primary">SUCCESS</span>
+              <span>Deploy complete: latest node updated to HEAD.</span>
+            </div>
+            <div className="flex gap-4">
+              <span className="text-[#494847]">[14:03:02]</span>
+              <span className="text-error">WARN</span>
+              <span>Latency spike detected. Rerouting traffic...</span>
+            </div>
+            <div className="flex gap-4 animate-pulse">
+              <span className="text-[#494847]">[14:03:15]</span>
+              <span className="text-white">WAIT</span>
+              <span>Scanning for available processes...</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  );
+}
+
+function FallbackCards() {
+  const nodes = [
+    { id: "0x8892", title: "OBLIVION_CORE",  label: "STABLE",      badge: "bg-primary/5 border-primary/20 text-primary",   stack: "K8S / AWS_US_EAST_1", runtime: "GO_1.21 / GOMOD", mission: "DISTRIBUTED_LEDGER_ORCHESTRATION_AND_FAULT_TOLERANT_INDEXING.", accent: "bg-primary" },
+    { id: "0x2210", title: "NEURAL_PIPE",    label: "COMPUTING",   badge: "bg-tertiary/5 border-tertiary/20 text-tertiary", stack: "BARE_METAL / NVIDIA_H100", runtime: "RUST_NIGHTLY / CUDA", mission: "LOW_LATENCY_INFERENCE_ENGINE_FOR_AUTONOMOUS_NETWORK_TRAFFIC_SHAPING.", accent: "bg-tertiary" },
+    { id: "0xFA44", title: "GHOST_DB",       label: "MAINTENANCE", badge: "bg-error/5 border-error/20 text-error",           stack: "HYBRID / POSTGRES_CLUSTER", runtime: "ELIXIR_BEAM / OTP", mission: "REAL-TIME_STATE_SYNCHRONIZATION_ACROSS_GEOGRAPHICALLY_ISOLATED_NODES.", accent: "bg-secondary" },
+  ];
+  return (
+    <>
+      {nodes.map((n, i) => (
+        <div key={n.id} className="bg-surface-container-low group relative overflow-hidden">
+          <div className={`absolute top-0 left-0 w-1 h-full ${n.accent} opacity-0 group-hover:opacity-100 transition-opacity`} />
+          <div className="h-8 bg-surface-container-high px-4 flex items-center justify-between border-b border-[#494847]/10">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-error/50" />
+              <div className="w-2.5 h-2.5 rounded-full bg-secondary/50" />
+              <div className="w-2.5 h-2.5 rounded-full bg-primary/50" />
+            </div>
+            <div className="text-[10px] font-bold text-on-surface-variant/50 tracking-widest">
+              NODE_SPEC_{String(i + 1).padStart(3, "0")}
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="font-sans text-2xl font-bold mb-1">{n.title}</h3>
+                <p className="text-[10px] text-primary/60 font-bold">$ node_id: {n.id}-ALPHA</p>
+              </div>
+              <div className={`px-2 py-1 border text-[10px] font-bold ${n.badge}`}>{n.label}</div>
+            </div>
+            <div className="space-y-3 mb-8">
+              <div className="grid grid-cols-3 text-[10px] py-2 border-b border-[#494847]/10">
+                <span className="text-on-surface-variant">ARCHITECTURE</span>
+                <span className="col-span-2 font-bold text-white tracking-wider">{n.stack}</span>
+              </div>
+              <div className="grid grid-cols-3 text-[10px] py-2 border-b border-[#494847]/10">
+                <span className="text-on-surface-variant">RUNTIME</span>
+                <span className="col-span-2 font-bold text-tertiary tracking-wider">{n.runtime}</span>
+              </div>
+              <div className="grid grid-cols-3 text-[10px] py-2">
+                <span className="text-on-surface-variant">MISSION_OBJ</span>
+                <span className="col-span-2 text-on-surface-variant leading-relaxed italic">{n.mission}</span>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button className="flex-1 bg-[#262626] border border-[#494847]/20 py-2 text-[10px] font-bold text-primary hover:bg-primary hover:text-on-primary transition-colors">./view_source</button>
+              <button className="flex-1 bg-[#262626] border border-[#494847]/20 py-2 text-[10px] font-bold text-secondary hover:border-secondary transition-colors">ssh connect --root</button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </>
   );
 }
