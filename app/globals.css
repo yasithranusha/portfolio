@@ -1,26 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ─── Kernel Console Design System ─────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Surfaces */
+  --color-background:                 #0e0e0e;
+  --color-surface:                    #0e0e0e;
+  --color-surface-dim:                #0e0e0e;
+  --color-surface-bright:             #2c2c2c;
+  --color-surface-container-lowest:   #000000;
+  --color-surface-container-low:      #131313;
+  --color-surface-container:          #1a1919;
+  --color-surface-container-high:     #201f1f;
+  --color-surface-container-highest:  #262626;
+  --color-surface-variant:            #262626;
+  --color-surface-tint:               #55fe7e;
+
+  /* Primary — terminal green */
+  --color-primary:           #55fe7e;
+  --color-primary-dim:       #42ef72;
+  --color-primary-fixed:     #55fe7e;
+  --color-primary-fixed-dim: #42ef72;
+  --color-primary-container: #04d259;
+  --color-on-primary:        #005d23;
+  --color-on-primary-container: #003e15;
+  --color-inverse-primary:   #006e2b;
+
+  /* Secondary — blue */
+  --color-secondary:           #5db4fe;
+  --color-secondary-dim:       #4da7ef;
+  --color-secondary-fixed:     #aed6ff;
+  --color-secondary-fixed-dim: #91c9ff;
+  --color-secondary-container: #00639b;
+  --color-on-secondary:        #003150;
+  --color-on-secondary-container: #f4f8ff;
+
+  /* Tertiary — cyan */
+  --color-tertiary:           #85ecff;
+  --color-tertiary-dim:       #00d4ed;
+  --color-tertiary-fixed:     #00e3fe;
+  --color-tertiary-fixed-dim: #00d4ed;
+  --color-tertiary-container: #00e3fe;
+  --color-on-tertiary:        #005762;
+  --color-on-tertiary-container: #004d57;
+
+  /* On-surface */
+  --color-on-surface:         #ffffff;
+  --color-on-surface-variant: #adaaaa;
+  --color-on-background:      #ffffff;
+  --color-inverse-surface:    #fcf8f8;
+  --color-inverse-on-surface: #565554;
+
+  /* Outlines */
+  --color-outline:         #777575;
+  --color-outline-variant: #494847;
+
+  /* Error */
+  --color-error:           #ff7351;
+  --color-error-dim:       #d53d18;
+  --color-error-container: #b92902;
+  --color-on-error:        #450900;
+  --color-on-error-container: #ffd2c8;
+
+  /* Typography */
+  --font-sans:     "Space Grotesk", sans-serif;
+  --font-mono:     "JetBrains Mono", monospace;
+  --font-headline: "Space Grotesk", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ──────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0e0e0e;
+  color: #ffffff;
+  font-family: "JetBrains Mono", monospace;
+  min-height: 100dvh;
+  /* Subtle scanline texture */
+  background-image:
+    linear-gradient(rgba(85, 254, 126, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(85, 254, 126, 0.025) 1px, transparent 1px);
+  background-size: 2px 2px;
+}
+
+/* ─── Scanline overlay ───────────────────────────────────────────── */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.08) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.015), rgba(0, 255, 0, 0.008), rgba(0, 0, 255, 0.015));
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── Terminal glow utilities ───────────────────────────────────── */
+.glow-primary {
+  text-shadow: 0 0 10px rgba(85, 254, 126, 0.5);
+}
+
+.glow-secondary {
+  text-shadow: 0 0 10px rgba(93, 180, 254, 0.5);
+}
+
+.glow-box-primary {
+  box-shadow: 0 0 20px rgba(85, 254, 126, 0.08);
+}
+
+/* ─── Boot loader fade ───────────────────────────────────────────── */
+@keyframes bootFadeIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Cursor blink ───────────────────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ─── Typewriter ────────────────────────────────────────────────── */
+@keyframes typewriter {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #0e0e0e; }
+::-webkit-scrollbar-thumb { background: #494847; }
+::-webkit-scrollbar-thumb:hover { background: #55fe7e; }
+
+/* ─── Selection ─────────────────────────────────────────────────── */
+::selection {
+  background: rgba(85, 254, 126, 0.2);
+  color: #55fe7e;
 }
