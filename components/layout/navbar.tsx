@@ -1,30 +1,33 @@
 import Link from "next/link";
-import { NavPath } from "./nav-path";
 import { NavLinks } from "./nav-links";
-import { MobileNav } from "./mobile-nav";
 
 export function Navbar() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center px-4 sm:px-6 bg-[#131313] border-b border-[#494847]/20">
-      {/* Logo */}
-      <Link
-        href="/"
-        className="flex-shrink-0 text-[11px] font-mono font-semibold text-[#55fe7e] tracking-widest uppercase glow-primary mr-4"
-      >
-        [KERNEL_CONSOLE]
-      </Link>
-
-      {/* Path breadcrumb */}
-      <div className="flex-1 min-w-0 mr-4">
-        <NavPath />
+    <header className="flex justify-between items-center px-6 h-12 w-full fixed top-0 z-50 bg-[#131313] font-mono uppercase tracking-widest text-xs">
+      {/* Left: logo + nav links */}
+      <div className="flex items-center gap-4">
+        <Link href="/" className="text-[#55fe7e] font-bold tracking-tighter text-base">
+          KERNEL_CONSOLE
+        </Link>
+        <NavLinks />
       </div>
 
-      {/* Desktop nav links */}
-      <NavLinks />
-
-      {/* Mobile hamburger */}
-      <div className="md:hidden">
-        <MobileNav />
+      {/* Right: search + icons */}
+      <div className="flex items-center gap-3">
+        <div className="hidden sm:flex items-center bg-[#262626] px-3 py-1 gap-2 border border-[#494847]/20">
+          <span className="text-[#55fe7e] text-[10px]">$</span>
+          <input
+            className="bg-transparent border-none outline-none text-[10px] w-32 text-[#55fe7e] placeholder:text-[#494847] font-mono"
+            placeholder="SEARCH_SYSTEM..."
+            type="text"
+          />
+        </div>
+        <span className="material-symbols-outlined text-[#55fe7e] cursor-pointer hover:bg-[#262626] p-1 transition-colors text-sm">
+          terminal
+        </span>
+        <span className="material-symbols-outlined text-[#adaaaa] cursor-pointer hover:bg-[#262626] p-1 transition-colors text-sm">
+          settings
+        </span>
       </div>
     </header>
   );
