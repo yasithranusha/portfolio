@@ -1,65 +1,122 @@
-import Image from "next/image";
+import { siteConfig } from "@/config/site";
+import { fetchPosts, fetchProjects } from "@/lib/notion";
+import { TypingText } from "@/components/motion/typing-text";
+import { StaggerReveal } from "@/components/motion/stagger-reveal";
+import { SectionLabel } from "@/components/ui/section-label";
+import { TerminalWindow } from "@/components/ui/terminal-window";
+import { PostCard } from "@/components/blog/post-card";
+import { ProjectCard } from "@/components/projects/project-card";
+import Link from "next/link";
 
-export default function Home() {
+export default async function HomePage() {
+  const [posts, projects] = await Promise.all([
+    fetchPosts(),
+    fetchProjects(),
+  ]);
+
+  const featuredPosts = posts.filter((p) => p.featured).slice(0, 3);
+  const recentPosts = featuredPosts.length ? featuredPosts : posts.slice(0, 3);
+  const featuredProjects = projects.filter((p) => p.featured).slice(0, 3);
+  const displayProjects = featuredProjects.length ? featuredProjects : projects.slice(0, 3);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-20">
+
+      {/* ─── Hero ─────────────────────────────────────────────────── */}
+      <section className="pt-8 space-y-6">
+        <SectionLabel>system.boot</SectionLabel>
+
+        <div className="space-y-2">
+          <p className="text-[10px] font-mono text-[#494847] tracking-widest">
+            KERNEL_CONSOLE v2.0.4 — {siteConfig.role}
           </p>
+          <h1 className="text-3xl sm:text-5xl font-bold font-sans text-white leading-tight">
+            {siteConfig.name}
+          </h1>
+          <p className="text-sm font-mono text-[#adaaaa] mt-1">{siteConfig.role}</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <TerminalWindow title="terminal — bash" className="max-w-2xl">
+          <div className="p-4">
+            <TypingText lines={siteConfig.tagline} speed={45} prefix="$" />
+          </div>
+        </TerminalWindow>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 text-sm font-mono text-[#55fe7e] border border-[#55fe7e]/30 px-4 py-2 hover:bg-[#55fe7e]/5 transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            &gt; View Projects
+          </Link>
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm font-mono text-[#adaaaa] hover:text-[#5db4fe] transition-colors"
           >
-            Documentation
-          </a>
+            &gt; Read Blog
+          </Link>
         </div>
-      </main>
+      </section>
+
+      {/* ─── Latest Log Entries ───────────────────────────────────── */}
+      {recentPosts.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <SectionLabel>latest_log_entries</SectionLabel>
+            <Link
+              href="/blog"
+              className="text-[10px] font-mono text-[#adaaaa] hover:text-[#5db4fe] transition-colors tracking-widest"
+            >
+              ls -la /blog →
+            </Link>
+          </div>
+
+          <StaggerReveal className="border border-[#494847]/20">
+            {recentPosts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </StaggerReveal>
+        </section>
+      )}
+
+      {/* ─── Featured Projects ─────────────────────────────────────── */}
+      {displayProjects.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <SectionLabel>featured_nodes</SectionLabel>
+            <Link
+              href="/projects"
+              className="text-[10px] font-mono text-[#adaaaa] hover:text-[#5db4fe] transition-colors tracking-widest"
+            >
+              cat /registry →
+            </Link>
+          </div>
+
+          <StaggerReveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {displayProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </StaggerReveal>
+        </section>
+      )}
+
+      {/* ─── System Diagnostics ───────────────────────────────────── */}
+      <section className="space-y-4">
+        <SectionLabel>sys.diagnostics</SectionLabel>
+
+        <TerminalWindow title="htop — system monitor">
+          <div className="p-4 font-mono text-[11px] space-y-1 text-[#adaaaa]">
+            <p><span className="text-[#55fe7e]">CPU</span>  [████████░░░░░░░░]  52% — Distributed Systems</p>
+            <p><span className="text-[#5db4fe]">MEM</span>  [███████████░░░░░]  71% — Cloud Architecture</p>
+            <p><span className="text-[#85ecff]">NET</span>  [████████████████] 100% — Open Source</p>
+            <p><span className="text-[#adaaaa]">DSK</span>  [████░░░░░░░░░░░░]  24% — DevOps & SRE</p>
+            <div className="pt-2 border-t border-[#494847]/20 text-[#494847]">
+              uptime: ∞ &nbsp;|&nbsp; load: stable &nbsp;|&nbsp; status: <span className="text-[#55fe7e]">online</span>
+            </div>
+          </div>
+        </TerminalWindow>
+      </section>
+
     </div>
   );
 }
