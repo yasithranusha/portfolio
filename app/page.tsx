@@ -1,6 +1,7 @@
 import { siteConfig } from "@/config/site";
 import { fetchPosts, fetchProjects } from "@/lib/notion";
 import Link from "next/link";
+import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
 
 export default async function HomePage() {
   const [posts, projects] = await Promise.all([fetchPosts(), fetchProjects()]);
@@ -22,73 +23,20 @@ export default async function HomePage() {
       </div>
 
       {/* ─── Bento Grid ───────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 md:[grid-template-rows:520px_auto] gap-6">
 
-        {/* Man Page Terminal — 8 cols */}
-        <section className="md:col-span-8 bg-surface-container-low border border-[#494847]/10 relative overflow-hidden">
-          {/* Terminal header */}
-          <div className="h-8 bg-[#262626] flex items-center px-4 justify-between">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 bg-error rounded-full opacity-50" />
-              <div className="w-3 h-3 bg-tertiary rounded-full opacity-50" />
-              <div className="w-3 h-3 bg-primary rounded-full opacity-50" />
-            </div>
-            <span className="text-[10px] text-on-surface-variant font-bold">
-              MAN(1) // {siteConfig.name.toUpperCase().replace(" ", "_")}
-            </span>
-          </div>
-
-          {/* Man page content */}
-          <div className="p-8 font-mono text-sm leading-relaxed">
-            <div className="mb-6">
-              <span className="text-primary font-bold">NAME</span>
-              <div className="pl-8 text-on-surface mt-1">
-                {siteConfig.handle} — {siteConfig.role}
-              </div>
-            </div>
-            <div className="mb-6">
-              <span className="text-primary font-bold">SYNOPSIS</span>
-              <div className="pl-8 text-on-surface mt-1">
-                {siteConfig.handle}{" "}
-                <span className="text-tertiary">[--lang=go|ts]</span>{" "}
-                <span className="text-tertiary">[--env=k8s|aws]</span>{" "}
-                <span className="text-tertiary">[--mode=cloud-native]</span>
-              </div>
-            </div>
-            <div className="mb-6">
-              <span className="text-primary font-bold">DESCRIPTION</span>
-              <div className="pl-8 text-on-surface-variant mt-1 max-w-xl leading-7">
-                {siteConfig.description}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 pl-8 border-l border-primary/20 mt-8 py-4">
-              <div>
-                <span className="text-tertiary block text-[10px] font-bold mb-2">ARGUMENTS</span>
-                <ul className="text-on-surface-variant text-xs space-y-1">
-                  <li>-D Distributed_Systems</li>
-                  <li>-e Event_Driven</li>
-                  <li>-k K8s_Native</li>
-                </ul>
-              </div>
-              <div>
-                <span className="text-tertiary block text-[10px] font-bold mb-2">EXIT STATUS</span>
-                <p className="text-on-surface-variant text-xs">
-                  0 on successful deployment.<br />1 on kernel panic (rare).
-                </p>
-              </div>
-            </div>
-            {/* Blinking cursor */}
-            <div className="mt-8 flex items-center gap-2">
-              <span className="text-primary">$</span>
-              <span className="w-2 h-5 bg-primary animate-pulse inline-block" />
-            </div>
-          </div>
-        </section>
+        {/* Interactive Terminal — 8 cols, stretches to match vitals row height */}
+        <InteractiveTerminal
+          title={`MAN(1) // ${siteConfig.name.toUpperCase().replace(" ", "_")}`}
+          initialCommands={["ls -la", "./yasith.sh"]}
+          posts={posts}
+          className="md:col-span-8 h-[280px] md:h-full md:min-h-0"
+        />
 
         {/* Vitals Column — 4 cols */}
-        <div className="md:col-span-4 flex flex-col gap-6">
+        <div className="md:col-span-4 flex flex-col gap-6 md:h-full">
           {/* Coffee level */}
-          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-primary/30">
+          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-primary/30 flex-1">
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">VITALS::COFFEE_LEVEL</span>
               <span className="material-symbols-outlined text-primary text-xl">coffee</span>
@@ -108,7 +56,7 @@ export default async function HomePage() {
           </div>
 
           {/* Uptime */}
-          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-tertiary/30">
+          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-tertiary/30 flex-1">
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">EXPERIENCE::UPTIME</span>
               <span className="material-symbols-outlined text-tertiary text-xl">schedule</span>
@@ -124,7 +72,7 @@ export default async function HomePage() {
           </div>
 
           {/* Kernel panics */}
-          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-error/30">
+          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-error/30 flex-1">
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">STRESS::KERNEL_PANICS</span>
               <span className="material-symbols-outlined text-error text-xl">dangerous</span>

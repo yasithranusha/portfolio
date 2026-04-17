@@ -28,7 +28,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="scanlines min-h-full flex flex-col bg-background text-on-surface font-mono overflow-x-hidden">
+      <body suppressHydrationWarning className="scanlines min-h-full flex flex-col bg-background text-on-surface font-mono overflow-x-hidden">
         <BootLoader />
         <Navbar />
         <Sidebar />

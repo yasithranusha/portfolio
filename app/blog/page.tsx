@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchPosts } from "@/lib/notion";
 import { TagFilter } from "./tag-filter";
+import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
 
 export const metadata: Metadata = {
   title: "NODES // Article Registry",
@@ -90,24 +91,14 @@ export default async function BlogPage() {
       {/* ─── Search + Filter + Archive List ──────────────────────── */}
       <TagFilter posts={posts} allTags={allTags} />
 
-      {/* ─── Terminal Diagnostics ─────────────────────────────────── */}
-      <div className="mt-12 p-6 bg-black font-mono text-xs border border-[#494847]/10">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-3 h-3 rounded-full bg-error" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500" />
-          <div className="w-3 h-3 rounded-full bg-primary" />
-          <span className="ml-4 text-[#494847] text-[10px] uppercase tracking-widest">SYSTEM_DIAGNOSTICS</span>
-        </div>
-        <p className="text-on-surface-variant mb-1">root@kernel:~/archives# tail -n 5 ./registry_status.log</p>
-        <p className="text-primary/70">[OK] INDEX_REFRESH_COMPLETE: {posts.length} NODES PARSED</p>
-        <p className="text-primary/70">[OK] PERMISSION_SYNC: SECURE</p>
-        <p className="text-tertiary/70">[INFO] CACHE_HIT_RATE: 94.2%</p>
-        <p className="text-[#494847]">[INFO] SESSION_TOKEN: EXPIRING IN 12:44:02</p>
-        <div className="flex mt-4">
-          <span className="text-primary mr-2">root@kernel:~/archives#</span>
-          <span className="inline-block w-2 h-4 bg-primary animate-pulse" />
-        </div>
-      </div>
+      {/* ─── Blog Shell ───────────────────────────────────────────── */}
+      <InteractiveTerminal
+        title="BLOG_SHELL :: ~/archives"
+        initialCwd="~/archives"
+        initialCommands={["pwd", "ls -la"]}
+        posts={posts}
+        className="mt-12 h-72"
+      />
     </div>
   );
 }

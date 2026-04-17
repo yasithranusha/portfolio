@@ -147,44 +147,6 @@ export default async function ProjectsPage() {
             );
           })}
 
-          {/* Add New Node placeholder */}
-          <div className="bg-[#000000] border border-dashed border-[#494847]/30 flex flex-col items-center justify-center p-12 group cursor-pointer hover:border-primary/50 transition-all">
-            <span className="material-symbols-outlined text-4xl text-[#494847] group-hover:text-primary mb-4">add_circle</span>
-            <div className="font-sans text-lg font-bold text-[#494847] group-hover:text-white uppercase tracking-tighter">
-              Initialize New Node
-            </div>
-            <div className="text-[10px] text-[#494847] mt-2">$ kernel_init --new-process</div>
-          </div>
-        </div>
-
-        {/* ─── Terminal Log Footer ───────────────────────────────── */}
-        <div className="mt-12 bg-black p-4 border border-[#494847]/10 font-mono text-[10px]">
-          <div className="flex items-center gap-2 mb-2 text-primary border-b border-primary/20 pb-1">
-            <span className="material-symbols-outlined text-xs">terminal</span>
-            <span>LIVE_SYSTEM_OUTPUT</span>
-          </div>
-          <div className="space-y-1 opacity-70">
-            <div className="flex gap-4">
-              <span className="text-[#494847]">[14:02:11]</span>
-              <span className="text-secondary">INFO</span>
-              <span>Nodes synchronized with master registry.</span>
-            </div>
-            <div className="flex gap-4">
-              <span className="text-[#494847]">[14:02:45]</span>
-              <span className="text-primary">SUCCESS</span>
-              <span>Deploy complete: latest node updated to HEAD.</span>
-            </div>
-            <div className="flex gap-4">
-              <span className="text-[#494847]">[14:03:02]</span>
-              <span className="text-error">WARN</span>
-              <span>Latency spike detected. Rerouting traffic...</span>
-            </div>
-            <div className="flex gap-4 animate-pulse">
-              <span className="text-[#494847]">[14:03:15]</span>
-              <span className="text-white">WAIT</span>
-              <span>Scanning for available processes...</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
