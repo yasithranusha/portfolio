@@ -77,35 +77,35 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* System metrics */}
+      {/* Core Engineering Proficiencies */}
       <div className="bg-surface-container-low border border-[#494847]/20 p-5">
-        <div className="text-[10px] text-on-surface-variant mb-3 font-bold tracking-widest">SYSTEM_METRICS</div>
+        <div className="text-[10px] text-on-surface-variant mb-3 font-bold tracking-widest">CORE_PROFICIENCY</div>
         <div className="space-y-3">
           <div>
             <div className="flex justify-between text-[10px] mb-1">
-              <span className="text-on-surface-variant">CAFFEINE_SAT</span>
-              <span className="text-primary font-bold">82%</span>
+              <span className="text-on-surface-variant">BACKEND_ENG (Java/Node)</span>
+              <span className="text-primary font-bold">95%</span>
             </div>
             <div className="w-full h-1 bg-[#262626]">
-              <div className="bg-primary h-full" style={{ width: "82%" }} />
+              <div className="bg-primary h-full" style={{ width: "95%" }} />
             </div>
           </div>
           <div>
             <div className="flex justify-between text-[10px] mb-1">
-              <span className="text-on-surface-variant">FOCUS_LEVEL</span>
-              <span className="text-tertiary font-bold">94%</span>
+              <span className="text-on-surface-variant">FRONTEND_DEV (React)</span>
+              <span className="text-tertiary font-bold">85%</span>
             </div>
             <div className="w-full h-1 bg-[#262626]">
-              <div className="bg-tertiary h-full" style={{ width: "94%" }} />
+              <div className="bg-tertiary h-full" style={{ width: "85%" }} />
             </div>
           </div>
           <div>
             <div className="flex justify-between text-[10px] mb-1">
-              <span className="text-on-surface-variant">BUG_TOLERANCE</span>
-              <span className="text-secondary font-bold">67%</span>
+              <span className="text-on-surface-variant">CLOUD_ARCHITECTURE</span>
+              <span className="text-secondary font-bold">80%</span>
             </div>
             <div className="w-full h-1 bg-[#262626]">
-              <div className="bg-secondary h-full" style={{ width: "67%" }} />
+              <div className="bg-secondary h-full" style={{ width: "80%" }} />
             </div>
           </div>
         </div>
