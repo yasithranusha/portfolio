@@ -7,7 +7,7 @@ export function Navbar() {
       {/* Left: logo + nav links */}
       <div className="flex items-center gap-3 md:gap-4">
         <Link href="/" className="text-[#55fe7e] font-bold tracking-tighter text-base">
-          KERNEL_CONSOLE
+          YASITH.SYS
         </Link>
       </div>
 

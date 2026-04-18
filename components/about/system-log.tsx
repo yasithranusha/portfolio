@@ -78,7 +78,7 @@ const CURRENT: { time: string; level: Level; event: string; fields: Field[] }[] 
   { time: "2026-04-18T00:04:47.004Z", level: "INF", event: "handler.serve",      fields: [{ k: "handler", v: "IdentityHandler" }, { k: "action", v: "load_record" }] },
   { time: "2026-04-18T00:04:47.006Z", level: "DBG", event: "cache.get",          fields: [{ k: "key", v: "identity:v1", vc: "text-secondary" }, { k: "hit", v: "true", vc: "text-primary" }, { k: "ttl", v: "3600s" }] },
   { time: "2026-04-18T00:04:47.009Z", level: "DBG", event: "response.serialize", fields: [{ k: "format", v: "json" }, { k: "bytes", v: "842", vc: "text-on-surface" }, { k: "content_type", v: "application/json" }] },
-  { time: "2026-04-18T00:04:47.011Z", level: "DBG", event: "response.headers",   fields: [{ k: "X-Powered-By", v: "KERNEL_CONSOLE", vc: "text-secondary" }, { k: "X-Handle", v: siteConfig.handle, vc: "text-secondary" }] },
+  { time: "2026-04-18T00:04:47.011Z", level: "DBG", event: "response.headers",   fields: [{ k: "X-Powered-By", v: "YASITH.SYS", vc: "text-secondary" }, { k: "X-Handle", v: siteConfig.handle, vc: "text-secondary" }] },
   { time: "2026-04-18T00:04:47.014Z", level: "INF", event: "request_done",       fields: [{ k: "method", v: "GET", vc: "text-tertiary" }, { k: "path", v: "/api/v1/identity", vc: "text-secondary" }, { k: "status", v: "200", vc: "text-primary" }, { k: "latency", v: "14ms", vc: "text-on-surface" }, { k: "bytes", v: "842" }] },
 ];
 
