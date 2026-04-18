@@ -3,6 +3,7 @@ import { fetchPosts, fetchProjects } from "@/lib/notion";
 import Link from "next/link";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
 import { MotionDiv, MotionSpan } from "@/components/ui/motion";
+import { SpotlightCard } from "@/components/ui/spotlight-card";
 
 export default async function HomePage() {
   const [posts, projects] = await Promise.all([fetchPosts(), fetchProjects()]);
@@ -57,13 +58,14 @@ export default async function HomePage() {
           <MotionDiv 
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
             whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
-            className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-primary/30 flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(85,254,126,0.1)]"
+            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(85,254,126,0.1)] flex flex-col"
           >
-            <div className="flex justify-between items-start">
-              <span className="text-[10px] font-bold text-on-surface-variant">CORE::TECH_STACK</span>
-              <span className="material-symbols-outlined text-primary text-xl">terminal</span>
-            </div>
-            <div className="mt-8">
+            <SpotlightCard className="p-6 flex-1 justify-between border-b border-primary/30" spotlightColor="rgba(85, 254, 126, 0.12)">
+              <div className="flex justify-between items-start">
+                <span className="text-[10px] font-bold text-on-surface-variant">CORE::TECH_STACK</span>
+                <span className="material-symbols-outlined text-primary text-xl">terminal</span>
+              </div>
+              <div className="mt-8">
               <div className="flex flex-wrap gap-2 mb-2">
                 <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">Java (Spring)</span>
                 <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">React.js</span>
@@ -74,19 +76,21 @@ export default async function HomePage() {
                 Status: Cloud-native full-stack engineering.
               </p>
             </div>
+            </SpotlightCard>
           </MotionDiv>
 
           {/* Experience */}
           <MotionDiv 
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
             whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
-            className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-tertiary/30 flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,189,46,0.1)]"
+            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,189,46,0.1)] flex flex-col"
           >
-            <div className="flex justify-between items-start">
-              <span className="text-[10px] font-bold text-on-surface-variant">RUNTIME::EXPERIENCE</span>
-              <span className="material-symbols-outlined text-tertiary text-xl">work</span>
-            </div>
-            <div className="mt-4">
+            <SpotlightCard className="p-6 flex-1 justify-between border-b border-tertiary/30" spotlightColor="rgba(255, 189, 46, 0.12)">
+              <div className="flex justify-between items-start">
+                <span className="text-[10px] font-bold text-on-surface-variant">RUNTIME::EXPERIENCE</span>
+                <span className="material-symbols-outlined text-tertiary text-xl">work</span>
+              </div>
+              <div className="mt-4">
               <div className="font-sans text-3xl font-bold text-on-surface">
                 2<span className="text-xs text-tertiary ml-1">YEARS</span>
               </div>
@@ -94,19 +98,21 @@ export default async function HomePage() {
                 Production architecture & distributed systems.
               </p>
             </div>
+            </SpotlightCard>
           </MotionDiv>
 
           {/* Cloud Infrastructure */}
           <MotionDiv 
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
             whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
-            className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-error/30 flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,115,81,0.1)]"
+            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,115,81,0.1)] flex flex-col"
           >
-            <div className="flex justify-between items-start">
-              <span className="text-[10px] font-bold text-on-surface-variant">CLOUD::INFRASTRUCTURE</span>
-              <span className="material-symbols-outlined text-error text-xl">cloud</span>
-            </div>
-            <div className="mt-4">
+            <SpotlightCard className="p-6 flex-1 justify-between border-b border-error/30" spotlightColor="rgba(255, 115, 81, 0.12)">
+              <div className="flex justify-between items-start">
+                <span className="text-[10px] font-bold text-on-surface-variant">CLOUD::INFRASTRUCTURE</span>
+                <span className="material-symbols-outlined text-error text-xl">cloud</span>
+              </div>
+              <div className="mt-4">
               <div className="flex flex-wrap gap-2 mb-2">
                 <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">AWS & Azure</span>
                 <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">Docker / K8s</span>
@@ -116,6 +122,7 @@ export default async function HomePage() {
                 Cloud-native deployments & orchestration.
               </p>
             </div>
+            </SpotlightCard>
           </MotionDiv>
         </div>
 
