@@ -29,20 +29,15 @@ export function Sidebar() {
       <SidebarNav items={siteConfig.nav} icons={sidebarIcons} />
 
       {/* Bottom actions */}
-      <div className="p-6 border-t border-[#494847]/10">
-        <button className="w-full bg-[#55fe7e] text-[#005d23] py-2 font-bold text-[10px] font-mono uppercase tracking-widest hover:shadow-[0_0_15px_rgba(85,254,126,0.4)] transition-all">
+      <div className="p-6 border-t border-[#494847]/10 mt-auto">
+        <a 
+          href={siteConfig.socials.github} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="w-full bg-[#55fe7e] text-[#005d23] py-2 font-bold text-[10px] font-mono uppercase tracking-widest hover:shadow-[0_0_15px_rgba(85,254,126,0.4)] transition-all flex items-center justify-center text-center cursor-pointer"
+        >
           EXECUTE_FORK
-        </button>
-        <div className="mt-4 flex flex-col gap-2 font-mono text-[10px] uppercase">
-          <div className="flex items-center gap-2 text-[#494847] hover:text-[#adaaaa] cursor-pointer">
-            <span className="material-symbols-outlined text-xs">settings</span>
-            SETTINGS
-          </div>
-          <div className="flex items-center gap-2 text-[#494847] hover:text-[#ff7351] cursor-pointer">
-            <span className="material-symbols-outlined text-xs">power_settings_new</span>
-            LOGOUT
-          </div>
-        </div>
+        </a>
       </div>
     </aside>
   );
