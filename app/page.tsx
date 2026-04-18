@@ -23,13 +23,9 @@ export default async function HomePage() {
           SYSTEM_BOOT_SEQUENCE_COMPLETE
         </div>
         <h1 className="font-sans text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase flex flex-wrap items-center">
-          <MotionSpan
-            animate={{ opacity: [1, 1, 0.4, 1, 1, 0.1, 1] }}
-            transition={{ duration: 0.3, times: [0, 0.2, 0.4, 0.6, 0.8, 0.9, 1], repeat: Infinity, repeatDelay: 6 }}
-            className="inline-block"
-          >
+          <span className="inline-block">
             {siteConfig.handle}_Ranusha
-          </MotionSpan>
+          </span>
           <span className="text-primary">.sh</span>
         </h1>
       </MotionDiv>

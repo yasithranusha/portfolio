@@ -3,7 +3,6 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
-import { BootLoader } from "@/components/motion/boot-loader";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -29,7 +28,6 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className="scanlines min-h-full flex flex-col bg-background text-on-surface font-mono overflow-x-hidden">
-        <BootLoader />
         <Navbar />
         <Sidebar />
         {/* Main canvas: sidebar offset on md+, top navbar offset, bottom footer offset */}
