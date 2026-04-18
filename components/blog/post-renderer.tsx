@@ -1,11 +1,13 @@
 import { highlight } from "@/lib/shiki";
+import { PostContent } from "./post-content";
 
 interface PostRendererProps {
-  content: string;
+  content: string | undefined | null;
 }
 
 // Parse code blocks from markdown and highlight with Shiki
-async function renderContent(markdown: string): Promise<string> {
+async function renderContent(markdown: string | undefined | null): Promise<string> {
+  if (!markdown) return "";
   const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
   const parts: string[] = [];
   let lastIndex = 0;
@@ -50,10 +52,11 @@ function markdownToHtml(md: string): string {
 export async function PostRenderer({ content }: PostRendererProps) {
   const html = await renderContent(content);
 
-  return (
-    <article
-      className="font-mono text-sm max-w-none [&_pre]:my-6 [&_pre]:overflow-x-auto [&_pre]:p-4 [&_pre]:border [&_pre]:border-[#494847]/30 [&_pre]:bg-[#0e0e0e]"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
+  if (!html) {
+    return (
+      <p className="font-mono text-sm text-[#494847] italic">// no content yet</p>
+    );
+  }
+
+  return <PostContent html={html} />;
 }

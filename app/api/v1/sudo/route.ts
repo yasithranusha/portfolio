@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { siteConfig } from "@/config/site";
 
+export const dynamic = "force-dynamic";
+
 // you didn't see this
 
-export async function GET() {
+export async function GET(): Promise<Response> {
   return NextResponse.json(
     {
       status:       "GRANTED",

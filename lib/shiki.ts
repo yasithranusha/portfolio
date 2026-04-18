@@ -22,6 +22,9 @@ export async function getHighlighter(): Promise<Highlighter> {
       "sql",
       "css",
       "html",
+      "xml",
+      "java",
+      "kotlin",
       "markdown",
       "dockerfile",
     ],
@@ -30,10 +33,17 @@ export async function getHighlighter(): Promise<Highlighter> {
   return highlighter;
 }
 
+const SUPPORTED = new Set([
+  "typescript","javascript","tsx","jsx","bash","shell","json","yaml",
+  "python","go","rust","sql","css","html","xml","java","kotlin",
+  "markdown","dockerfile","text",
+]);
+
 export async function highlight(code: string, lang: string): Promise<string> {
   const h = await getHighlighter();
+  const safeLang = SUPPORTED.has(lang) ? lang : "text";
   return h.codeToHtml(code, {
-    lang: lang || "text",
+    lang: safeLang,
     theme: "github-dark-dimmed",
   });
 }

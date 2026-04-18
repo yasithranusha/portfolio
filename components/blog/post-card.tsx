@@ -6,7 +6,7 @@ interface PostCardProps {
   post: NotionPost;
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string): string {
   if (!dateStr) return "---";
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }).toUpperCase();

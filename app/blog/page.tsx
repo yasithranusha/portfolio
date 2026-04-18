@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { fetchPosts } from "@/lib/notion";
 import { TagFilter } from "./tag-filter";
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   description: "READ-ONLY ACCESS GRANTED. Exploring technical logs, system documentation, and operational protocols.",
 };
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string): string {
   if (!dateStr) return "---";
   return new Date(dateStr)
     .toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
@@ -49,25 +50,25 @@ export default async function BlogPage() {
       {featured && (
         <section className="mt-12 mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-[#494847]/30 bg-surface-container-low group overflow-hidden">
-            <div className="lg:col-span-7 p-8 flex flex-col justify-between">
+            <div className={`${featured.cover ? "lg:col-span-7" : "lg:col-span-12"} p-6 sm:p-8 flex flex-col justify-between min-w-0 overflow-hidden`}>
               <div>
-                <div className="flex items-center gap-2 mb-6">
-                  <span className="bg-secondary/10 text-secondary px-2 py-0.5 text-[10px] font-bold">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="bg-secondary/10 text-secondary px-2 py-0.5 text-[10px] font-bold shrink-0">
                     STABLE_DOC
                   </span>
                   <span className="text-[#494847] text-[10px]">#001_FEATURED</span>
                 </div>
-                <h2 className="font-sans text-3xl font-bold text-on-surface mb-4 uppercase">
-                  {featured.title.toUpperCase().replace(/\s+/g, "_")}.MD
+                <h2 className="font-sans text-2xl sm:text-3xl font-bold text-on-surface mb-4 uppercase break-words leading-tight">
+                  {featured.title}
                 </h2>
-                <p className="text-on-surface-variant font-mono text-sm mb-8 line-clamp-3">
+                <p className="text-on-surface-variant font-mono text-sm mb-6 line-clamp-3">
                   {featured.excerpt || "An in-depth technical exploration. Click to read the full article."}
                 </p>
               </div>
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center gap-4">
                 <Link
                   href={`/blog/${featured.slug}`}
-                  className="bg-primary text-on-primary px-6 py-2 flex items-center gap-2 font-bold text-xs hover:opacity-90 transition-opacity"
+                  className="bg-primary text-on-primary px-5 py-2 flex items-center gap-2 font-bold text-xs hover:opacity-90 transition-opacity shrink-0"
                 >
                   <span className="material-symbols-outlined text-sm">terminal</span>
                   CAT /path/to/doc
@@ -78,27 +79,33 @@ export default async function BlogPage() {
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-5 relative h-48 lg:h-auto overflow-hidden bg-[#262626]">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary/20 text-[120px]">article</span>
+            {featured.cover && (
+              <div className="lg:col-span-5 relative h-48 lg:h-auto overflow-hidden bg-[#262626]">
+                <Image
+                  src={featured.cover}
+                  alt={featured.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent lg:bg-gradient-to-l" />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent lg:bg-gradient-to-l" />
-            </div>
+            )}
           </div>
         </section>
       )}
-
-      {/* ─── Search + Filter + Archive List ──────────────────────── */}
-      <TagFilter posts={posts} allTags={allTags} />
 
       {/* ─── Blog Shell ───────────────────────────────────────────── */}
       <InteractiveTerminal
         title="BLOG_SHELL :: ~/archives"
         initialCwd="~/archives"
-        initialCommands={["pwd", "ls -la"]}
+        initialCommands={["ls -la -n 5"]}
         posts={posts}
-        className="mt-12 h-72"
+        className="mt-8 h-72"
       />
+
+      {/* ─── Search + Filter + Archive List ──────────────────────── */}
+      <TagFilter posts={posts} allTags={allTags} />
     </div>
   );
 }

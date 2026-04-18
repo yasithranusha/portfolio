@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { siteConfig } from "@/config/site";
 
-export async function GET() {
+export const dynamic = "force-dynamic";
+
+export async function GET(): Promise<Response> {
   return NextResponse.json(
     {
       handle:         siteConfig.handle,

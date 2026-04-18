@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { type NotionPost } from "@/lib/notion";
 
@@ -9,16 +9,19 @@ interface TagFilterProps {
   allTags: string[];
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string): string {
   if (!dateStr) return "---";
   return new Date(dateStr)
     .toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
     .toUpperCase();
 }
 
+const ITEMS_PER_PAGE = 8;
+
 export function TagFilter({ posts, allTags }: TagFilterProps) {
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
 
   const filtered = posts.filter((p) => {
     const matchesTag = activeTag ? p.tags.includes(activeTag) : true;
@@ -27,6 +30,11 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
       : true;
     return matchesTag && matchesQuery;
   });
+
+  useEffect(() => { setPage(1); }, [activeTag, query]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
     <>
@@ -81,16 +89,14 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
         </div>
       )}
 
-      {/* ls -la registry table */}
+      {/* Archive table */}
       <div className="border border-[#494847]/20 bg-surface-container-low overflow-hidden">
         {/* Column headers */}
-        <div className="hidden md:grid grid-cols-12 bg-[#262626] px-6 py-2 text-[10px] font-bold text-[#494847] border-b border-[#494847]/20 tracking-widest uppercase">
-          <div className="col-span-1">PERMISSIONS</div>
-          <div className="col-span-1 text-center">SIZE</div>
-          <div className="col-span-2">TIMESTAMP</div>
-          <div className="col-span-5">FILENAME</div>
-          <div className="col-span-2">TAGS</div>
-          <div className="col-span-1 text-right">READ_TIME</div>
+        <div className="hidden md:flex px-6 py-2 bg-[#262626] border-b border-[#494847]/20 text-[10px] font-bold text-[#494847] tracking-widest uppercase font-mono">
+          <div className="w-28 shrink-0">DATE</div>
+          <div className="flex-1">TITLE</div>
+          <div className="hidden lg:block w-44 shrink-0">TAGS</div>
+          <div className="w-16 shrink-0 text-right">READ</div>
         </div>
 
         {/* Rows */}
@@ -100,37 +106,27 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
               // no entries match filter
             </div>
           ) : (
-            filtered.map((post) => (
+            paginated.map((post) => (
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="grid grid-cols-1 md:grid-cols-12 items-center px-6 py-4 hover:bg-[#262626] group cursor-pointer transition-colors"
+                className="flex flex-col md:flex-row md:items-center px-6 py-4 hover:bg-[#262626] group transition-colors gap-2 md:gap-0"
               >
-                <div className="col-span-1 text-secondary text-[10px] hidden md:block">-rwxr-xr-x</div>
-                <div className="col-span-1 text-[#494847] text-[10px] text-center hidden md:block">
-                  {post.readTime.replace("~", "").trim()}
+                <div className="w-28 shrink-0 text-[10px] text-[#494847]">
+                  {formatDate(post.date)}
                 </div>
-                <div className="col-span-2 text-[#494847] text-[10px] mb-2 md:mb-0">
-                  [{formatDate(post.date)}]
+                <div className="flex-1 min-w-0 text-sm font-semibold text-on-surface group-hover:text-primary transition-colors truncate">
+                  {post.title}
                 </div>
-                <div className="col-span-5 flex items-center gap-3">
-                  <span className="material-symbols-outlined text-primary text-lg flex-shrink-0">description</span>
-                  <span className="text-on-surface group-hover:text-primary transition-colors text-sm font-semibold truncate">
-                    {post.title.toLowerCase().replace(/\s+/g, "_")}.md
-                  </span>
-                </div>
-                <div className="col-span-2 flex flex-wrap gap-2 my-2 md:my-0">
+                <div className="hidden lg:flex w-44 shrink-0 flex-wrap gap-1.5">
                   {post.tags.slice(0, 2).map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[9px] border border-[#494847]/40 px-2 py-0.5 text-tertiary"
-                    >
-                      #{tag.toUpperCase()}
+                    <span key={tag} className="text-[9px] border border-[#494847]/40 px-2 py-0.5 text-tertiary">
+                      #{tag}
                     </span>
                   ))}
                 </div>
-                <div className="col-span-1 text-right text-xs text-on-surface-variant font-bold hidden md:block">
-                  [{post.readTime}]
+                <div className="w-16 shrink-0 text-right text-[10px] text-[#494847]">
+                  {post.readTime}
                 </div>
               </Link>
             ))
@@ -141,10 +137,24 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
         <div className="bg-surface-container px-6 py-3 border-t border-[#494847]/20">
           <div className="flex items-center justify-between text-[10px] text-[#494847] font-mono">
             <div>TOTAL {filtered.length} ARTICLES FOUND</div>
-            <div className="flex gap-4">
-              <button className="hover:text-primary">[PREV]</button>
-              <span className="text-on-surface">PAGE 01 / 01</span>
-              <button className="hover:text-primary">[NEXT]</button>
+            <div className="flex gap-4 items-center">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className={`hover:text-primary transition-colors ${page === 1 ? "opacity-30 cursor-not-allowed" : ""}`}
+              >
+                [PREV]
+              </button>
+              <span className="text-on-surface">
+                PAGE {String(page).padStart(2, "0")} / {String(totalPages).padStart(2, "0")}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className={`hover:text-primary transition-colors ${page === totalPages ? "opacity-30 cursor-not-allowed" : ""}`}
+              >
+                [NEXT]
+              </button>
             </div>
           </div>
         </div>

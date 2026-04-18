@@ -124,7 +124,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <h2 className="font-sans text-2xl font-bold uppercase tracking-tighter">
-                Latest_Output
+                DEVELOPER_LOGS
               </h2>
               <div className="h-px w-32 bg-[#494847]/30 hidden md:block" />
             </div>

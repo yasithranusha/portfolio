@@ -7,7 +7,9 @@ export const metadata: Metadata = {
   description: "Deployed systems, open source nodes, and infrastructure projects.",
 };
 
-const statusStyles = {
+type StatusStyle = { badge: string; label: string; hover: string };
+
+const statusStyles: Record<"online" | "warn" | "offline", StatusStyle> = {
   online:  { badge: "bg-primary/5 border-primary/20 text-primary",   label: "STABLE",      hover: "group-hover:opacity-100 bg-primary" },
   warn:    { badge: "bg-tertiary/5 border-tertiary/20 text-tertiary", label: "COMPUTING",   hover: "group-hover:opacity-100 bg-tertiary" },
   offline: { badge: "bg-error/5 border-error/20 text-error",         label: "MAINTENANCE", hover: "group-hover:opacity-100 bg-error" },

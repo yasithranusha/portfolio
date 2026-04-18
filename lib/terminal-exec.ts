@@ -113,7 +113,7 @@ const CURL_SUDO_OUTPUT: TerminalLine[] = [
 
 const HELP_LINES: TerminalLine[] = [
   { text: "Available commands:", color: "text-primary" },
-  { text: "  ls [-la]                          List files in current directory",  color: "text-on-surface-variant" },
+  { text: "  ls [-la] [-n NUM]                 List files, sorted by date (newest first)", color: "text-on-surface-variant" },
   { text: "  cd <dir>                          Change directory (archives, ~, ..)", color: "text-on-surface-variant" },
   { text: "  cat <file>                        Read a file",                       color: "text-on-surface-variant" },
   { text: "  ./yasith.sh                       Run identity manifest (in ~/)",     color: "text-on-surface-variant" },
@@ -189,11 +189,19 @@ export function exec(
     if (posts.length === 0) {
       return { output: [{ text: "(no posts — check Notion connection)", color: "text-on-surface-variant" }], nextCwd };
     }
+    const nMatch = args.match(/-n\s+(\d+)/);
+    const limit  = nMatch ? parseInt(nMatch[1], 10) : undefined;
+    const sorted = [...posts].sort((a, b) => {
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+    const displayed = limit ? sorted.slice(0, limit) : sorted;
     if (detailed) {
       return {
         output: [
-          { text: `total ${posts.length}`, color: "text-on-surface-variant" },
-          ...posts.map((p) => ({
+          { text: `total ${displayed.length}${limit ? ` (showing ${displayed.length} of ${posts.length})` : ""}`, color: "text-on-surface-variant" },
+          ...displayed.map((p) => ({
             text: `-rwxr-xr-x  1 root  staff  ${p.readTime.replace("~", "").trim().padEnd(5)}  ${fmtDate(p.date)}  ${p.slug}.md`,
             color: "text-on-surface" as const,
           })),
@@ -201,7 +209,7 @@ export function exec(
         nextCwd,
       };
     }
-    return { output: posts.map((p) => ({ text: `${p.slug}.md`, color: "text-secondary" as const })), nextCwd };
+    return { output: displayed.map((p) => ({ text: `${p.slug}.md`, color: "text-secondary" as const })), nextCwd };
   }
 
   if (cmd === "cat") {
