@@ -35,52 +35,55 @@ export default async function HomePage() {
 
         {/* Vitals Column — 4 cols */}
         <div className="md:col-span-4 flex flex-col gap-6 md:h-full">
-          {/* Coffee level */}
+          {/* Tech Stack */}
           <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-primary/30 flex-1">
             <div className="flex justify-between items-start">
-              <span className="text-[10px] font-bold text-on-surface-variant">VITALS::COFFEE_LEVEL</span>
-              <span className="material-symbols-outlined text-primary text-xl">coffee</span>
+              <span className="text-[10px] font-bold text-on-surface-variant">CORE::TECH_STACK</span>
+              <span className="material-symbols-outlined text-primary text-xl">terminal</span>
             </div>
             <div className="mt-8">
-              <div className="flex justify-between mb-2 text-xs font-bold">
-                <span>CAFFEINE_SATURATION</span>
-                <span className="text-primary">82%</span>
-              </div>
-              <div className="w-full h-1.5 bg-[#262626]">
-                <div className="bg-primary h-full" style={{ width: "82%" }} />
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">Java (Spring)</span>
+                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">React.js</span>
+                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">Node.js</span>
+                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">TypeScript</span>
               </div>
               <p className="text-[10px] text-on-surface-variant mt-2 italic">
-                Status: Operating within nominal parameters.
+                Status: Cloud-native full-stack engineering.
               </p>
             </div>
           </div>
 
-          {/* Uptime */}
+          {/* Experience */}
           <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-tertiary/30 flex-1">
             <div className="flex justify-between items-start">
-              <span className="text-[10px] font-bold text-on-surface-variant">EXPERIENCE::UPTIME</span>
-              <span className="material-symbols-outlined text-tertiary text-xl">schedule</span>
+              <span className="text-[10px] font-bold text-on-surface-variant">RUNTIME::EXPERIENCE</span>
+              <span className="material-symbols-outlined text-tertiary text-xl">work</span>
             </div>
             <div className="mt-4">
               <div className="font-sans text-3xl font-bold text-on-surface">
-                3,285<span className="text-xs text-tertiary ml-1">DAYS</span>
+                2<span className="text-xs text-tertiary ml-1">YEARS</span>
               </div>
               <p className="text-[10px] text-on-surface-variant mt-1">
-                Total operational time in production environments.
+                Production architecture & distributed systems.
               </p>
             </div>
           </div>
 
-          {/* Kernel panics */}
+          {/* Cloud Infrastructure */}
           <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-error/30 flex-1">
             <div className="flex justify-between items-start">
-              <span className="text-[10px] font-bold text-on-surface-variant">STRESS::KERNEL_PANICS</span>
-              <span className="material-symbols-outlined text-error text-xl">dangerous</span>
+              <span className="text-[10px] font-bold text-on-surface-variant">CLOUD::INFRASTRUCTURE</span>
+              <span className="material-symbols-outlined text-error text-xl">cloud</span>
             </div>
             <div className="mt-4">
-              <div className="font-sans text-3xl font-bold text-on-surface">004</div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">AWS & Azure</span>
+                <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">Docker / K8s</span>
+                <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">CI/CD</span>
+              </div>
               <p className="text-[10px] text-on-surface-variant mt-1">
-                Total mental reboots required this fiscal quarter.
+                Cloud-native deployments & orchestration.
               </p>
             </div>
           </div>
@@ -91,7 +94,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <h2 className="font-sans text-2xl font-bold uppercase tracking-tighter">
-                Latest_Log_Entries
+                Latest_Output
               </h2>
               <div className="h-px w-32 bg-[#494847]/30 hidden md:block" />
             </div>
@@ -108,11 +111,11 @@ export default async function HomePage() {
               <FallbackLogEntries />
             ) : (
               recentPosts.map((post, i) => {
-                const levels = ["INFO", "DEBUG", "FATAL"] as const;
+                const levels = ["ARCHITECTURE", "BACKEND", "FRONTEND"] as const;
                 const levelColors = {
-                  INFO:  { badge: "bg-primary/10 text-primary",   border: "hover:border-primary",   title: "group-hover:text-primary" },
-                  DEBUG: { badge: "bg-tertiary/10 text-tertiary",  border: "hover:border-tertiary",  title: "group-hover:text-tertiary" },
-                  FATAL: { badge: "bg-error/10 text-error",        border: "hover:border-error",     title: "group-hover:text-error" },
+                  ARCHITECTURE:  { badge: "bg-primary/10 text-primary",   border: "hover:border-primary",   title: "group-hover:text-primary" },
+                  BACKEND: { badge: "bg-tertiary/10 text-tertiary",  border: "hover:border-tertiary",  title: "group-hover:text-tertiary" },
+                  FRONTEND: { badge: "bg-error/10 text-error",        border: "hover:border-error",     title: "group-hover:text-error" },
                 };
                 const level = levels[i % 3];
                 const colors = levelColors[level];
@@ -152,9 +155,9 @@ export default async function HomePage() {
 
 function FallbackLogEntries() {
   const entries = [
-    { level: "INFO",  color: "bg-primary/10 text-primary",   border: "hover:border-primary",   title: "group-hover:text-primary",   date: "[2024-05-12 09:42]", text: "Optimizing Garbage Collection in High-Throughput Rust Services" },
-    { level: "DEBUG", color: "bg-tertiary/10 text-tertiary",  border: "hover:border-tertiary",  title: "group-hover:text-tertiary",  date: "[2024-04-28 23:15]", text: "Ghost in the Shell: Debugging Mystery Latency Spikes in K8s" },
-    { level: "FATAL", color: "bg-error/10 text-error",        border: "hover:border-error",     title: "group-hover:text-error",     date: "[2024-04-15 02:04]", text: "Post-Mortem: Why the Load Balancer Hates Your JSON" },
+    { level: "ARCHITECTURE",  color: "bg-primary/10 text-primary",   border: "hover:border-primary",   title: "group-hover:text-primary",   date: "[2024-05-12 09:42]", text: "Optimizing Garbage Collection in High-Throughput Rust Services" },
+    { level: "BACKEND", color: "bg-tertiary/10 text-tertiary",  border: "hover:border-tertiary",  title: "group-hover:text-tertiary",  date: "[2024-04-28 23:15]", text: "Ghost in the Shell: Debugging Mystery Latency Spikes in K8s" },
+    { level: "FRONTEND", color: "bg-error/10 text-error",        border: "hover:border-error",     title: "group-hover:text-error",     date: "[2024-04-15 02:04]", text: "Post-Mortem: Why the Load Balancer Hates Your JSON" },
   ];
   return (
     <>

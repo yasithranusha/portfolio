@@ -34,7 +34,7 @@ export default function AboutPage() {
           </div>
           <div className="flex justify-between">
             <span className="text-on-surface-variant">UPTIME</span>
-            <span className="text-on-surface font-bold">3,285 DAYS</span>
+            <span className="text-on-surface font-bold">1,431 DAYS</span>
           </div>
           <div className="flex justify-between">
             <span className="text-on-surface-variant">KERNEL_PANICS</span>
