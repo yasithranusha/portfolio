@@ -8,7 +8,7 @@ export function NavLinks() {
   const pathname = usePathname();
 
   return (
-    <div className="hidden md:flex gap-6 ml-8">
+    <div className="flex gap-4 md:gap-6 sm:ml-4 lg:ml-8">
       {siteConfig.nav.map((item) => {
         const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
         return (
