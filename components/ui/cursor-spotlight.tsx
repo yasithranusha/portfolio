@@ -4,14 +4,20 @@ import { useEffect } from "react";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "motion/react";
 
 export function GlobalCursorSpotlight() {
-  const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
-  const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
+  // Initialize to static off-screen or center coordinates for identical SSR / Client render
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
 
   // Apply a very slight spring to make the light feel fluid
   const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
+    // Post-hydration, safely jump the light to the center of the window if you want.
+    // Or just let it fly in from offscreen on the first mouse movement.
+    mouseX.set(window.innerWidth / 2);
+    mouseY.set(window.innerHeight / 2);
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
