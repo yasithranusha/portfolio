@@ -57,10 +57,9 @@ export default async function HomePage() {
           {/* Tech Stack */}
           <MotionDiv 
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-            whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
-            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(85,254,126,0.1)] flex flex-col"
+            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(85,254,126,0.05)] flex flex-col"
           >
-            <SpotlightCard className="p-6 flex-1 justify-between border-b border-primary/30" spotlightColor="rgba(85, 254, 126, 0.12)">
+            <SpotlightCard className="p-6 flex-1 justify-between border-b border-primary/30" spotlightColor="rgba(85, 254, 126, 0.05)">
               <div className="flex justify-between items-start">
                 <span className="text-[10px] font-bold text-on-surface-variant">CORE::TECH_STACK</span>
                 <span className="material-symbols-outlined text-primary text-xl">terminal</span>
@@ -82,10 +81,9 @@ export default async function HomePage() {
           {/* Experience */}
           <MotionDiv 
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-            whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
-            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,189,46,0.1)] flex flex-col"
+            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,189,46,0.05)] flex flex-col"
           >
-            <SpotlightCard className="p-6 flex-1 justify-between border-b border-tertiary/30" spotlightColor="rgba(255, 189, 46, 0.12)">
+            <SpotlightCard className="p-6 flex-1 justify-between border-b border-tertiary/30" spotlightColor="rgba(255, 189, 46, 0.05)">
               <div className="flex justify-between items-start">
                 <span className="text-[10px] font-bold text-on-surface-variant">RUNTIME::EXPERIENCE</span>
                 <span className="material-symbols-outlined text-tertiary text-xl">work</span>
@@ -104,10 +102,9 @@ export default async function HomePage() {
           {/* Cloud Infrastructure */}
           <MotionDiv 
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-            whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
-            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,115,81,0.1)] flex flex-col"
+            className="flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,115,81,0.05)] flex flex-col"
           >
-            <SpotlightCard className="p-6 flex-1 justify-between border-b border-error/30" spotlightColor="rgba(255, 115, 81, 0.12)">
+            <SpotlightCard className="p-6 flex-1 justify-between border-b border-error/30" spotlightColor="rgba(255, 115, 81, 0.05)">
               <div className="flex justify-between items-start">
                 <span className="text-[10px] font-bold text-on-surface-variant">CLOUD::INFRASTRUCTURE</span>
                 <span className="material-symbols-outlined text-error text-xl">cloud</span>
