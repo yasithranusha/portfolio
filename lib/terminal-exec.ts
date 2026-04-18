@@ -87,8 +87,8 @@ const CURL_OUTPUT: TerminalLine[] = [
   { html: true, text: `  <span class="text-tertiary">"location"</span>: <span class="text-secondary-fixed-dim">"Sri Lanka / Remote"</span>,` },
   { html: true, text: `  <span class="text-tertiary">"open_to_work"</span>: <span class="text-primary">true</span>,` },
   { html: true, text: `  <span class="text-tertiary">"stack"</span>: [<span class="text-secondary-fixed-dim">"Java"</span>, <span class="text-secondary-fixed-dim">"Spring Boot"</span>, <span class="text-secondary-fixed-dim">"TypeScript"</span>, <span class="text-secondary-fixed-dim">"React.js"</span>, <span class="text-secondary-fixed-dim">"AWS"</span>],` },
-  { html: true, text: `  <span class="text-tertiary">"github"</span>: <span class="text-secondary-fixed-dim">"${siteConfig.socials.github}"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"linkedin"</span>: <span class="text-secondary-fixed-dim">"${siteConfig.socials.linkedin}"</span>` },
+  { html: true, text: `  <span class="text-tertiary">"github"</span>: <a href="${siteConfig.socials.github}" target="_blank" rel="noreferrer" class="text-secondary-fixed-dim hover:underline">"${siteConfig.socials.github}"</a>,` },
+  { html: true, text: `  <span class="text-tertiary">"linkedin"</span>: <a href="${siteConfig.socials.linkedin}" target="_blank" rel="noreferrer" class="text-secondary-fixed-dim hover:underline">"${siteConfig.socials.linkedin}"</a>` },
   { text: "}", color: "text-on-surface-variant" },
 ];
 
