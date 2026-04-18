@@ -2,6 +2,7 @@ import { siteConfig } from "@/config/site";
 import { fetchPosts, fetchProjects } from "@/lib/notion";
 import Link from "next/link";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
+import { MotionDiv, MotionSpan } from "@/components/ui/motion";
 
 export default async function HomePage() {
   const [posts, projects] = await Promise.all([fetchPosts(), fetchProjects()]);
@@ -11,32 +12,57 @@ export default async function HomePage() {
     <div className="pt-8 pb-24 px-6 md:px-12 min-h-screen">
 
       {/* ─── Hero Header ──────────────────────────────────────────── */}
-      <div className="mb-12 border-l-4 border-primary pl-6">
+      <MotionDiv 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="mb-12 border-l-4 border-primary pl-6"
+      >
         <div className="flex items-center gap-2 text-primary text-xs font-bold mb-2">
           <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
           SYSTEM_BOOT_SEQUENCE_COMPLETE
         </div>
-        <h1 className="font-sans text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase">
-          {siteConfig.handle}_Ranusha
+        <h1 className="font-sans text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase flex flex-wrap items-center">
+          <MotionSpan
+            animate={{ opacity: [1, 1, 0.4, 1, 1, 0.1, 1] }}
+            transition={{ duration: 0.3, times: [0, 0.2, 0.4, 0.6, 0.8, 0.9, 1], repeat: Infinity, repeatDelay: 6 }}
+            className="inline-block"
+          >
+            {siteConfig.handle}_Ranusha
+          </MotionSpan>
           <span className="text-primary">.sh</span>
         </h1>
-      </div>
+      </MotionDiv>
 
       {/* ─── Bento Grid ───────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-12 md:[grid-template-rows:520px_auto] gap-6">
+      <MotionDiv 
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+        }}
+        className="grid grid-cols-1 md:grid-cols-12 md:[grid-template-rows:520px_auto] gap-6"
+      >
 
         {/* Interactive Terminal — 8 cols, stretches to match vitals row height */}
-        <InteractiveTerminal
-          title={`MAN(1) // ${siteConfig.name.toUpperCase().replace(" ", "_")}`}
-          initialCommands={["ls -la", "./yasith.sh"]}
-          posts={posts}
-          className="md:col-span-8 h-[280px] md:h-full md:min-h-0"
-        />
+        <MotionDiv variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} className="md:col-span-8 h-[280px] md:h-full md:min-h-0">
+          <InteractiveTerminal
+            title={`MAN(1) // ${siteConfig.name.toUpperCase().replace(" ", "_")}`}
+            initialCommands={["ls -la", "./yasith.sh"]}
+            posts={posts}
+            className="h-full"
+          />
+        </MotionDiv>
 
         {/* Vitals Column — 4 cols */}
         <div className="md:col-span-4 flex flex-col gap-6 md:h-full">
           {/* Tech Stack */}
-          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-primary/30 flex-1">
+          <MotionDiv 
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
+            whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
+            className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-primary/30 flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(85,254,126,0.1)]"
+          >
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">CORE::TECH_STACK</span>
               <span className="material-symbols-outlined text-primary text-xl">terminal</span>
@@ -52,10 +78,14 @@ export default async function HomePage() {
                 Status: Cloud-native full-stack engineering.
               </p>
             </div>
-          </div>
+          </MotionDiv>
 
           {/* Experience */}
-          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-tertiary/30 flex-1">
+          <MotionDiv 
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
+            whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
+            className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-tertiary/30 flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,189,46,0.1)]"
+          >
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">RUNTIME::EXPERIENCE</span>
               <span className="material-symbols-outlined text-tertiary text-xl">work</span>
@@ -68,10 +98,14 @@ export default async function HomePage() {
                 Production architecture & distributed systems.
               </p>
             </div>
-          </div>
+          </MotionDiv>
 
           {/* Cloud Infrastructure */}
-          <div className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-error/30 flex-1">
+          <MotionDiv 
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
+            whileHover={{ scale: 1.02, filter: "brightness(1.15)" }}
+            className="bg-surface-container-low p-6 flex flex-col justify-between border-b border-error/30 flex-1 transition-shadow hover:shadow-[0_4px_25px_rgba(255,115,81,0.1)]"
+          >
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">CLOUD::INFRASTRUCTURE</span>
               <span className="material-symbols-outlined text-error text-xl">cloud</span>
@@ -86,11 +120,14 @@ export default async function HomePage() {
                 Cloud-native deployments & orchestration.
               </p>
             </div>
-          </div>
+          </MotionDiv>
         </div>
 
         {/* ─── Latest Log Entries ─────────────────────────────────── */}
-        <section className="md:col-span-12 mt-6">
+        <MotionDiv 
+          variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
+          className="md:col-span-12 mt-6"
+        >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <h2 className="font-sans text-2xl font-bold uppercase tracking-tighter">
@@ -147,8 +184,8 @@ export default async function HomePage() {
               })
             )}
           </div>
-        </section>
-      </div>
+        </MotionDiv>
+      </MotionDiv>
     </div>
   );
 }
