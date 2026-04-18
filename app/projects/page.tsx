@@ -113,7 +113,7 @@ export default async function ProjectsPage() {
                     </div>
                     <div className="grid grid-cols-3 text-[10px] py-2">
                       <span className="text-on-surface-variant">MISSION_OBJ</span>
-                      <span className="col-span-2 text-on-surface-variant leading-relaxed italic">
+                      <span className="col-span-2 text-on-surface-variant leading-relaxed italic line-clamp-3 overflow-hidden">
                         {project.description || "—"}
                       </span>
                     </div>
@@ -193,7 +193,7 @@ function FallbackCards() {
               </div>
               <div className="grid grid-cols-3 text-[10px] py-2">
                 <span className="text-on-surface-variant">MISSION_OBJ</span>
-                <span className="col-span-2 text-on-surface-variant leading-relaxed italic">{n.mission}</span>
+                <span className="col-span-2 text-on-surface-variant leading-relaxed italic line-clamp-3 overflow-hidden">{n.mission}</span>
               </div>
             </div>
             <div className="flex gap-3">

@@ -22,7 +22,7 @@ export default async function HomePage() {
           <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
           SYSTEM_BOOT_SEQUENCE_COMPLETE
         </div>
-        <h1 className="font-sans text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase flex flex-wrap items-center">
+        <h1 className="font-sans text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase flex flex-wrap items-center">
           <span className="inline-block">
             {siteConfig.handle}_Ranusha
           </span>

@@ -9,7 +9,9 @@ export function Navbar() {
         <Link href="/" className="text-[#55fe7e] font-bold tracking-tighter text-base">
           KERNEL_CONSOLE
         </Link>
-        <NavLinks />
+        <div className="md:hidden">
+          <NavLinks />
+        </div>
       </div>
 
       {/* Right: search + icons */}
