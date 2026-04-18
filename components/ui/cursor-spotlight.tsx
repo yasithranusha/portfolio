@@ -23,7 +23,7 @@ export function GlobalCursorSpotlight() {
 
   return (
     <motion.div
-      className="pointer-events-none fixed inset-0 z-50"
+      className="pointer-events-none fixed inset-0 z-50 mix-blend-screen"
       style={{
         background: useMotionTemplate`
           radial-gradient(

@@ -63,7 +63,7 @@ export default async function ProjectsPage() {
             const accentColors = ["bg-primary", "bg-tertiary", "bg-secondary", "bg-error"];
             const accent = accentColors[i % accentColors.length];
             return (
-              <div key={project.id} className="bg-surface-container-low group relative overflow-hidden">
+              <div key={project.id} className="bg-surface-container-low group relative overflow-hidden transition-colors hover:bg-[#181818]">
                 {/* Hover accent strip */}
                 <div className={`absolute top-0 left-0 w-1 h-full ${accent} opacity-0 group-hover:opacity-100 transition-opacity`} />
 
@@ -162,7 +162,7 @@ function FallbackCards() {
   return (
     <>
       {nodes.map((n, i) => (
-        <div key={n.id} className="bg-surface-container-low group relative overflow-hidden">
+        <div key={n.id} className="bg-surface-container-low group relative overflow-hidden transition-colors hover:bg-[#181818]">
           <div className={`absolute top-0 left-0 w-1 h-full ${n.accent} opacity-0 group-hover:opacity-100 transition-opacity`} />
           <div className="h-8 bg-surface-container-high px-4 flex items-center justify-between border-b border-[#494847]/10">
             <div className="flex gap-1.5">
