@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NavLinks } from "./nav-links";
+import { MobileMenu } from "./mobile-menu";
 
 export function Navbar() {
   return (
@@ -9,8 +9,8 @@ export function Navbar() {
         <Link href="/" className="text-[#55fe7e] font-bold tracking-tighter text-base">
           KERNEL_CONSOLE
         </Link>
-        <div className="md:hidden">
-          <NavLinks />
+        <div className="md:hidden flex items-center ml-2">
+          <MobileMenu />
         </div>
       </div>
 
