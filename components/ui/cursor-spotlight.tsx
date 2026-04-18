@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "motion/react";
 
 export function GlobalCursorSpotlight() {
-  const mouseX = useMotionValue(window?.innerWidth ? window.innerWidth / 2 : 0);
-  const mouseY = useMotionValue(window?.innerHeight ? window.innerHeight / 2 : 0);
+  const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
+  const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
 
   // Apply a very slight spring to make the light feel fluid
   const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
