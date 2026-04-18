@@ -5,17 +5,17 @@ export function Navbar() {
   return (
     <header className="flex justify-between items-center px-6 h-12 w-full fixed top-0 z-50 bg-[#131313] font-mono uppercase tracking-widest text-xs">
       {/* Left: logo + nav links */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 md:gap-4">
+        <div className="md:hidden flex items-center">
+          <MobileMenu />
+        </div>
         <Link href="/" className="text-[#55fe7e] font-bold tracking-tighter text-base">
           KERNEL_CONSOLE
         </Link>
-        <div className="md:hidden flex items-center ml-2">
-          <MobileMenu />
-        </div>
       </div>
 
       {/* Right: search + icons */}
-      <div className="flex items-center gap-3">
+      <div className="hidden sm:flex items-center gap-3">
         <form 
           action="https://github.com/yasithranusha" 
           target="_blank"
