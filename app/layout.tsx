@@ -26,12 +26,46 @@ const materialSymbols = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: `KERNEL_CONSOLE // ${siteConfig.name.toUpperCase().replace(" ", "_")}`,
-    template: `%s // KERNEL_CONSOLE`,
+    default: siteConfig.name.toLowerCase().replace(/\s+/g, ""),
+    template: `%s | ${siteConfig.name.toLowerCase().replace(/\s+/g, "")}`,
   },
   description: siteConfig.description,
-  metadataBase: new URL(siteConfig.url),
+  keywords: [...siteConfig.keywords, siteConfig.name],
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  creator: siteConfig.name,
+  openGraph: {
+    type:        "website",
+    locale:      "en_US",
+    url:         siteConfig.url,
+    siteName:    siteConfig.branding,
+    title:       `${siteConfig.name} — ${siteConfig.role}`,
+    description: siteConfig.description,
+    images:      [{ url: "/logo-square.png", width: 1200, height: 1200, alt: `${siteConfig.name} — ${siteConfig.role}` }],
+  },
+  twitter: {
+    card:        "summary_large_image",
+    title:       `${siteConfig.name} — ${siteConfig.role}`,
+    description: siteConfig.description,
+    creator:     `@${siteConfig.handle}`,
+    site:        `@${siteConfig.handle}`,
+    images:      ["/logo-square.png"],
+  },
+  alternates: {
+    canonical: siteConfig.url,
+  },
+  robots: {
+    index:  true,
+    follow: true,
+    googleBot: {
+      index:               true,
+      follow:              true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet":       -1,
+    },
+  },
 };
 
 export default function RootLayout({

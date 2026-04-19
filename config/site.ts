@@ -13,7 +13,7 @@ export const siteConfig = {
     "API Security & Cloud-Native specialist.",
   ],
   description:
-    "Full-Stack Software Engineer with 2 years of production experience building scalable, cloud-native applications using Java (Spring Boot), Node.js/TypeScript, and React.js. Specializing in Zero-Trust Architecture, Identity Federation (OIDC/SAML), and securing distributed systems across AWS and Azure.",
+    "Full-Stack Software Engineer specializing in Java (Spring Boot), Node.js/TypeScript, and React.js. Building cloud-native apps with Zero-Trust security on AWS and Azure.",
   socials: {
     github:   "https://github.com/yasithranusha",
     linkedin: "https://linkedin.com/in/yasithranusha",
@@ -57,6 +57,24 @@ export const siteConfig = {
     scriptName: "yasith.sh",
     identityEndpoint: "/api/v1/identity",
     suffix: "Ranusha" // for handle_Suffix.sh
+  },
+  keywords: [
+    "Full-Stack Software Engineer", "Java", "Spring Boot", "TypeScript",
+    "React.js", "Node.js", "AWS", "Zero-Trust Architecture", "OIDC", "SAML",
+    "Cloud Native",
+  ],
+  pages: {
+    blog: {
+      title: "Blog",
+      description: "Technical articles, system documentation, and engineering insights.",
+    },
+    projects: {
+      title: "Projects",
+      description: "Open source projects, deployed systems, and software I've built.",
+    },
+    about: {
+      title: "About",
+    },
   },
   bootLines: [
     "[  0.000] Booting KERNEL_CONSOLE v2.0.4",

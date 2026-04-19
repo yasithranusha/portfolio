@@ -4,8 +4,9 @@ import { siteConfig } from "@/config/site";
 import { ConnectLayout } from "@/components/about/connect-client";
 
 export const metadata: Metadata = {
-  title: "CONNECT // System Identity",
+  title:       siteConfig.pages.about.title,
   description: `About ${siteConfig.name} — ${siteConfig.role}`,
+  alternates:  { canonical: `${siteConfig.url}about` },
 };
 
 export default function AboutPage() {

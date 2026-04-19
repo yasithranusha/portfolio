@@ -4,8 +4,9 @@ import { siteConfig } from "@/config/site";
 import { ProjectGrid } from "@/components/projects/project-grid";
 
 export const metadata: Metadata = {
-  title: "REGISTRY // Technical Manifest",
-  description: "Deployed systems, open source nodes, and infrastructure projects.",
+  title:       siteConfig.pages.projects.title,
+  description: siteConfig.pages.projects.description,
+  alternates:  { canonical: `${siteConfig.url}projects` },
 };
 
 export default async function ProjectsPage() {

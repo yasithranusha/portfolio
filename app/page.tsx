@@ -8,8 +8,21 @@ export default async function HomePage() {
   const [posts] = await Promise.all([fetchPosts()]);
   const recentPosts = posts.slice(0, 3);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name:     siteConfig.name,
+    url:      siteConfig.url,
+    jobTitle: siteConfig.role,
+    sameAs:   [siteConfig.socials.github, siteConfig.socials.linkedin],
+  };
+
   return (
     <div className="pt-8 pb-24 px-6 md:px-12 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* ─── Hero Header ──────────────────────────────────────────── */}
       <MotionDiv 
