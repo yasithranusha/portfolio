@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { ConnectLayout } from "@/components/about/connect-client";
+import { Icon } from "@/components/ui/icon";
 
 export const metadata: Metadata = {
   title:       siteConfig.pages.about.title,
@@ -18,7 +19,7 @@ export default function AboutPage() {
         <div className="text-[10px] text-on-surface-variant mb-3 font-bold tracking-widest">IDENTITY_RECORD</div>
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 bg-primary/10 border border-primary/20 flex items-center justify-center">
-            <span className="material-symbols-outlined text-primary">person</span>
+            <Icon name="person" className="text-primary" />
           </div>
           <div>
             <div className="font-sans font-bold text-on-surface">{siteConfig.name}</div>

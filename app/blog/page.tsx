@@ -5,6 +5,7 @@ import { fetchPosts } from "@/lib/notion";
 import { TagFilter } from "./tag-filter";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
 import { siteConfig } from "@/config/site";
+import { Icon } from "@/components/ui/icon";
 
 export const metadata: Metadata = {
   title:       siteConfig.pages.blog.title,
@@ -71,7 +72,7 @@ export default async function BlogPage() {
                   href={`/blog/${featured.slug}`}
                   className="bg-primary text-on-primary px-5 py-2 flex items-center gap-2 font-bold text-xs hover:opacity-90 transition-opacity shrink-0"
                 >
-                  <span className="material-symbols-outlined text-sm">terminal</span>
+                  <Icon name="terminal" className="text-sm" />
                   CAT /path/to/doc
                 </Link>
                 <div className="flex flex-col">

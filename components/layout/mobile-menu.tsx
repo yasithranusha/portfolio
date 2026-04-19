@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
 import { motion, AnimatePresence } from "motion/react";
+import { Icon } from "@/components/ui/icon";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -12,12 +13,12 @@ export function MobileMenu() {
 
   return (
     <>
-      <button 
+      <button
         onClick={() => setOpen(!open)}
-        className="material-symbols-outlined text-[#55fe7e] p-1 flex items-center justify-center hover:bg-[#262626] transition-colors rounded text-sm sm:text-base border border-transparent hover:border-[#494847]/20"
+        className="text-[#55fe7e] p-1 flex items-center justify-center hover:bg-[#262626] transition-colors rounded text-sm sm:text-base border border-transparent hover:border-[#494847]/20"
         aria-label="Toggle Menu"
       >
-        {open ? "close" : "menu"}
+        <Icon name={open ? "close" : "menu"} />
       </button>
 
       <AnimatePresence>

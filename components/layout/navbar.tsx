@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MobileMenu } from "./mobile-menu";
 import { siteConfig } from "@/config/site";
+import { Icon } from "@/components/ui/icon";
 
 export function Navbar() {
   return (
@@ -33,14 +34,10 @@ export function Navbar() {
             />
           </form>
           <Link href="/" title="Open Terminal">
-            <span className="material-symbols-outlined text-[#55fe7e] cursor-pointer hover:bg-[#262626] p-1 transition-colors text-sm flex items-center justify-center">
-              terminal
-            </span>
+            <Icon name="terminal" className="text-[#55fe7e] cursor-pointer hover:bg-[#262626] p-1 transition-colors text-sm flex items-center justify-center" />
           </Link>
           <Link href="/about" title="System Settings / Identity">
-            <span className="material-symbols-outlined text-[#adaaaa] cursor-pointer hover:bg-[#262626] p-1 transition-colors text-sm flex items-center justify-center">
-              settings
-            </span>
+            <Icon name="settings" className="text-[#adaaaa] cursor-pointer hover:bg-[#262626] p-1 transition-colors text-sm flex items-center justify-center" />
           </Link>
         </div>
       </div>

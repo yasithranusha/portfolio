@@ -21,8 +21,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 const materialSymbols = localFont({
-  src: "./fonts/MaterialSymbolsOutlined.woff2",
+  src: "./fonts/MaterialSymbolsSubset.woff2",
   variable: "--font-material-symbols",
+  display: "block",
 });
 
 export const metadata: Metadata = {
