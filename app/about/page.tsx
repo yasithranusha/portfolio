@@ -67,7 +67,7 @@ export default function AboutPage() {
             </Link>
           ))}
           <Link
-            href="mailto:hello@yasithranusha.dev"
+            href={`mailto:${siteConfig.email}`}
             className="flex items-center gap-2 text-[10px] font-mono text-on-surface-variant hover:text-primary transition-colors group py-1"
           >
             <span className="text-[#494847] group-hover:text-primary">{">"}</span>
@@ -80,34 +80,17 @@ export default function AboutPage() {
       {/* Core Engineering Proficiencies */}
       <div className="bg-surface-container-low border border-[#494847]/20 p-5">
         <div className="text-[10px] text-on-surface-variant mb-3 font-bold tracking-widest">CORE_PROFICIENCY</div>
-        <div className="space-y-3">
-          <div>
-            <div className="flex justify-between text-[10px] mb-1">
-              <span className="text-on-surface-variant">BACKEND_ENG (Java/Node)</span>
-              <span className="text-primary font-bold">95%</span>
+          {siteConfig.about.stats.map((stat) => (
+            <div key={stat.label}>
+              <div className="flex justify-between text-[10px] mb-1">
+                <span className="text-on-surface-variant">{stat.label}</span>
+                <span className={`text-${stat.color} font-bold`}>{stat.value}</span>
+              </div>
+              <div className="w-full h-1 bg-[#262626]">
+                <div className={`bg-${stat.color} h-full`} style={{ width: stat.value }} />
+              </div>
             </div>
-            <div className="w-full h-1 bg-[#262626]">
-              <div className="bg-primary h-full" style={{ width: "95%" }} />
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between text-[10px] mb-1">
-              <span className="text-on-surface-variant">FRONTEND_DEV (React)</span>
-              <span className="text-tertiary font-bold">85%</span>
-            </div>
-            <div className="w-full h-1 bg-[#262626]">
-              <div className="bg-tertiary h-full" style={{ width: "85%" }} />
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between text-[10px] mb-1">
-              <span className="text-on-surface-variant">CLOUD_ARCHITECTURE</span>
-              <span className="text-secondary font-bold">80%</span>
-            </div>
-            <div className="w-full h-1 bg-[#262626]">
-              <div className="bg-secondary h-full" style={{ width: "80%" }} />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

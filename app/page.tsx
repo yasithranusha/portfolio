@@ -24,7 +24,7 @@ export default async function HomePage() {
         </div>
         <h1 className="font-sans text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase flex flex-wrap items-center">
           <span className="inline-block">
-            {siteConfig.handle}_Ranusha
+            {siteConfig.handle}_{siteConfig.terminal.suffix}
           </span>
           <span className="text-primary">.sh</span>
         </h1>
@@ -38,14 +38,14 @@ export default async function HomePage() {
           hidden: { opacity: 0 },
           visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
         }}
-        className="grid grid-cols-1 md:grid-cols-12 md:[grid-template-rows:520px_auto] gap-6"
+        className="grid grid-cols-1 md:grid-cols-12 md:[grid-template-rows:33rem_auto] gap-6"
       >
 
         {/* Interactive Terminal — 8 cols, stretches to match vitals row height */}
-        <MotionDiv variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} className="md:col-span-8 h-[280px] md:h-full md:min-h-0">
+        <MotionDiv variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} className="md:col-span-8 h-[34.375rem] md:h-full md:min-h-0">
           <InteractiveTerminal
             title={`MAN(1) // ${siteConfig.name.toUpperCase().replace(" ", "_")}`}
-            initialCommands={["ls -la", "./yasith.sh"]}
+            initialCommands={["ls -la", `./${siteConfig.terminal.scriptName}`]}
             posts={posts}
             className="h-full"
           />
@@ -64,10 +64,11 @@ export default async function HomePage() {
             </div>
             <div className="mt-8">
               <div className="flex flex-wrap gap-2 mb-2">
-                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">Java (Spring)</span>
-                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">React.js</span>
-                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">Node.js</span>
-                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">TypeScript</span>
+                {siteConfig.vitals.techStack.map((tech) => (
+                  <span key={tech} className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold">
+                    {tech}
+                  </span>
+                ))}
               </div>
               <p className="text-[10px] text-on-surface-variant mt-2 italic">
                 Status: Cloud-native full-stack engineering.
@@ -86,10 +87,11 @@ export default async function HomePage() {
             </div>
             <div className="mt-4">
               <div className="font-sans text-3xl font-bold text-on-surface">
-                2<span className="text-xs text-tertiary ml-1">YEARS</span>
+                {siteConfig.vitals.experience.value}
+                <span className="text-xs text-tertiary ml-1">{siteConfig.vitals.experience.label}</span>
               </div>
               <p className="text-[10px] text-on-surface-variant mt-1">
-                Production architecture & distributed systems.
+                {siteConfig.vitals.experience.desc}
               </p>
             </div>
           </MotionDiv>
@@ -105,9 +107,11 @@ export default async function HomePage() {
             </div>
             <div className="mt-4">
               <div className="flex flex-wrap gap-2 mb-2">
-                <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">AWS & Azure</span>
-                <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">Docker / K8s</span>
-                <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">CI/CD</span>
+                {siteConfig.vitals.cloud.map((infra) => (
+                  <span key={infra} className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold">
+                    {infra}
+                  </span>
+                ))}
               </div>
               <p className="text-[10px] text-on-surface-variant mt-1">
                 Cloud-native deployments & orchestration.

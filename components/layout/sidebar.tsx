@@ -43,7 +43,7 @@ export function Sidebar() {
             <span className="material-symbols-outlined text-xs">settings</span>
             SETTINGS
           </Link>
-          <a href="mailto:hello@yasithranusha.dev" className="flex items-center gap-2 text-[#494847] hover:text-[#ff7351] cursor-pointer transition-colors">
+          <a href={`mailto:${siteConfig.email}`} className="flex items-center gap-2 text-[#494847] hover:text-[#ff7351] cursor-pointer transition-colors">
             <span className="material-symbols-outlined text-xs">power_settings_new</span>
             DISCONNECT (MAIL)
           </a>

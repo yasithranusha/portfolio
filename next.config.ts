@@ -9,6 +9,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['192.168.1.2'],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.amazonaws.com" },

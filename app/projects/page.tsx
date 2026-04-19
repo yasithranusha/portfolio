@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
   const avgLatency = "14ms";
 
   return (
-    <div className="mt-12 mb-10 p-8 min-h-screen">
+    <div className="mt-12 mb-10 p-4 sm:p-8 min-h-screen">
       <div className="max-w-7xl mx-auto">
 
         {/* ─── Breadcrumb / Header ────────────────────────────────── */}
@@ -31,7 +31,7 @@ export default async function ProjectsPage() {
             <span className="opacity-30">/</span>
             <span className="bg-[#262626] px-2 py-0.5">STATUS: SYSTEM_READY</span>
           </div>
-          <h1 className="font-sans text-5xl md:text-7xl font-bold tracking-tighter text-white mb-4">
+          <h1 className="font-sans text-3xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-white mb-4">
             DEPLOYED_SYSTEMS /{" "}
             <span className="text-primary/40">NODES</span>
           </h1>
@@ -39,10 +39,10 @@ export default async function ProjectsPage() {
         </div>
 
         {/* ─── Dashboard Stats Strip ──────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-surface-container-low p-4 border-l border-primary">
             <div className="text-[10px] text-on-surface-variant mb-1">TOTAL_UPTIME</div>
-            <div className="font-sans text-2xl font-bold">99.999%</div>
+            <div className="font-sans text-2xl font-bold">{siteConfig.stats.uptime}</div>
           </div>
           <div className="bg-surface-container-low p-4 border-l border-tertiary">
             <div className="text-[10px] text-on-surface-variant mb-1">ACTIVE_NODES</div>
@@ -50,11 +50,11 @@ export default async function ProjectsPage() {
           </div>
           <div className="bg-surface-container-low p-4 border-l border-secondary">
             <div className="text-[10px] text-on-surface-variant mb-1">NETWORK_LATENCY</div>
-            <div className="font-sans text-2xl font-bold">{avgLatency}</div>
+            <div className="font-sans text-2xl font-bold">{siteConfig.stats.latency}</div>
           </div>
           <div className="bg-surface-container-low p-4 border-l border-error">
             <div className="text-[10px] text-on-surface-variant mb-1">THREAT_LEVEL</div>
-            <div className="font-sans text-2xl font-bold">MINIMAL</div>
+            <div className="font-sans text-2xl font-bold text-error">{siteConfig.stats.threatLevel}</div>
           </div>
         </div>
 
@@ -107,12 +107,7 @@ export default async function ProjectsPage() {
                         </span>
                       </div>
                     )}
-                    <div className="grid grid-cols-3 text-[10px] py-2 border-b border-[#494847]/10">
-                      <span className="text-on-surface-variant">STATUS</span>
-                      <span className="col-span-2 font-bold text-white tracking-wider uppercase">
-                        {project.status}
-                      </span>
-                    </div>
+
                     <div className="grid grid-cols-3 text-[10px] py-2">
                       <span className="text-on-surface-variant">MISSION_OBJ</span>
                       <span className="col-span-2 text-on-surface-variant leading-relaxed italic line-clamp-3 overflow-hidden">
@@ -189,7 +184,7 @@ function FallbackCards() {
                 <span className="text-on-surface-variant">ARCHITECTURE</span>
                 <span className="col-span-2 font-bold text-white tracking-wider">{n.stack}</span>
               </div>
-              <div className="grid grid-cols-3 text-[10px] py-2 border-b border-[#494847]/10">
+              <div className="grid grid-cols-3 text-[10px] py-2">
                 <span className="text-on-surface-variant">RUNTIME</span>
                 <span className="col-span-2 font-bold text-tertiary tracking-wider">{n.runtime}</span>
               </div>
