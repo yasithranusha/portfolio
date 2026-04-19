@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Terminal Portfolio
 
-## Getting Started
+A developer portfolio built with Next.js, styled with a terminal/hacker aesthetic. Content is powered by Notion as a CMS.
 
-First, run the development server:
+## Stack
+
+- **Framework**: Next.js (App Router)
+- **Styling**: Tailwind CSS v4
+- **CMS**: Notion API
+- **Fonts**: Self-hosted via `next/font` — JetBrains Mono, Space Grotesk, Material Symbols Outlined
+- **Analytics**: Vercel Analytics + Speed Insights
+- **Deployment**: Vercel
+
+## Setup
+
+### 1. Clone and install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone <your-repo>
+cd portfolio
+bun install
+```
+
+### 2. Configure your identity
+
+All personal data lives in `config/site.ts` — update it with your name, role, socials, and other info before running.
+
+### 3. Set up Notion
+
+This project uses Notion as a CMS for blog posts and projects.
+
+**Create two Notion databases:**
+
+| Database | Purpose |
+|----------|---------|
+| Blog | Articles / posts |
+| Projects | Portfolio projects |
+
+**Required Notion database properties:**
+
+Blog DB:
+- `Title` (title)
+- `Slug` (rich text)
+- `Published` (checkbox)
+- `Date` (date)
+- `Tags` (multi-select)
+- `Excerpt` (rich text)
+- `Cover` (files & media or URL)
+
+Projects DB:
+- `Title` (title)
+- `Slug` (rich text)
+- `Description` (rich text)
+- `Status` (select: `online` / `offline` / `archived`)
+- `Tags` (multi-select)
+- `GithubRepos` (rich text — JSON array: `[{"label":"web","url":"https://github.com/..."}]`)
+- `LiveUrl` (url)
+
+**Create a Notion integration:**
+
+1. Go to [notion.so/my-integrations](https://www.notion.so/my-integrations)
+2. Create a new integration and copy the token
+3. Share both databases with the integration
+
+### 4. Environment variables
+
+Create a `.env.local` file:
+
+```env
+NOTION_TOKEN=secret_...
+NOTION_BLOG_DB_ID=...
+NOTION_PROJECTS_DB_ID=...
+```
+
+### 5. Run
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Vercel Analytics & Speed Insights
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Analytics and performance monitoring are set up via `@vercel/analytics` and `@vercel/speed-insights`. These activate automatically on Vercel deployments — no extra configuration needed. They are no-ops in local development.
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Deploy to Vercel and add the three environment variables (`NOTION_TOKEN`, `NOTION_BLOG_DB_ID`, `NOTION_PROJECTS_DB_ID`) in the project settings.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+vercel deploy
+```

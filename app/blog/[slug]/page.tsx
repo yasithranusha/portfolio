@@ -5,6 +5,7 @@ import { fetchPost, fetchPosts } from "@/lib/notion";
 import { PostRenderer } from "@/components/blog/post-renderer";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Tag } from "@/components/ui/tag";
+import { siteConfig } from "@/config/site";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -20,8 +21,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = await fetchPost(slug);
   if (!post) return { title: "Not Found" };
   return {
-    title: post.title,
+    title:       post.title,
     description: post.excerpt,
+    openGraph: {
+      title:         post.title,
+      description:   post.excerpt,
+      type:          "article",
+      url:           `${siteConfig.url}blog/${slug}`,
+      publishedTime: post.date,
+      authors:       [siteConfig.name],
+      tags:          post.tags,
+      ...(post.cover && { images: [{ url: post.cover, width: 1200, height: 630, alt: post.title }] }),
+    },
+    twitter: {
+      card:        "summary_large_image",
+      title:       post.title,
+      description: post.excerpt,
+      ...(post.cover && { images: [post.cover] }),
+    },
+    alternates: {
+      canonical: `${siteConfig.url}blog/${slug}`,
+    },
   };
 }
 
@@ -39,8 +59,25 @@ export default async function BlogPostPage({ params }: PageProps) {
       })
     : "";
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type":    "Article",
+    headline:        post.title,
+    description:     post.excerpt,
+    datePublished:   post.date,
+    author: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+    publisher: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+    url: `${siteConfig.url}blog/${slug}`,
+    ...(post.cover && { image: post.cover }),
+    keywords: post.tags.join(", "),
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb */}
       <div className="mb-8">
         <Link

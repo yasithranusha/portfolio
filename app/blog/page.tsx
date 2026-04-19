@@ -4,10 +4,11 @@ import Link from "next/link";
 import { fetchPosts } from "@/lib/notion";
 import { TagFilter } from "./tag-filter";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "NODES // Article Registry",
-  description: "READ-ONLY ACCESS GRANTED. Exploring technical logs, system documentation, and operational protocols.",
+  title:       siteConfig.pages.blog.title,
+  description: siteConfig.pages.blog.description,
 };
 
 function formatDate(dateStr: string): string {

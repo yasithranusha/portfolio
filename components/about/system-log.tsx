@@ -72,14 +72,14 @@ const PREV: { time: string; completeTime: string; ip: string; ua: string; ms: st
 
 // Current request — /api/v1/identity full middleware trace
 const CURRENT: { time: string; level: Level; event: string; fields: Field[] }[] = [
-  { time: "2026-04-18T00:04:47.000Z", level: "INF", event: "accepted",           fields: [{ k: "method", v: "GET", vc: "text-tertiary" }, { k: "path", v: "/api/v1/identity", vc: "text-secondary" }, { k: "ip", v: "143.92.71.x" }, { k: "host", v: "yasith.live", vc: "text-secondary" }, { k: "ua", v: '"curl/8.4.0"' }] },
+  { time: "2026-04-18T00:04:47.000Z", level: "INF", event: "accepted",           fields: [{ k: "method", v: "GET", vc: "text-tertiary" }, { k: "path", v: "/api/v1/identity", vc: "text-secondary" }, { k: "ip", v: "143.92.71.x" }, { k: "host", v: siteConfig.domain, vc: "text-secondary" }, { k: "ua", v: '"curl/8.4.0"' }] },
   { time: "2026-04-18T00:04:47.001Z", level: "DBG", event: "middleware.auth",    fields: [{ k: "action", v: "validate_headers" }, { k: "header", v: "X-Handle" }] },
   { time: "2026-04-18T00:04:47.002Z", level: "INF", event: "middleware.auth",    fields: [{ k: "status", v: "pass", vc: "text-primary" }, { k: "role", v: "root", vc: "text-primary" }, { k: "handle", v: siteConfig.handle, vc: "text-secondary" }] },
   { time: "2026-04-18T00:04:47.004Z", level: "INF", event: "handler.serve",      fields: [{ k: "handler", v: "IdentityHandler" }, { k: "action", v: "load_record" }] },
   { time: "2026-04-18T00:04:47.006Z", level: "DBG", event: "cache.get",          fields: [{ k: "key", v: "identity:v1", vc: "text-secondary" }, { k: "hit", v: "true", vc: "text-primary" }, { k: "ttl", v: "3600s" }] },
   { time: "2026-04-18T00:04:47.009Z", level: "DBG", event: "response.serialize", fields: [{ k: "format", v: "json" }, { k: "bytes", v: "842", vc: "text-on-surface" }, { k: "content_type", v: "application/json" }] },
-  { time: "2026-04-18T00:04:47.011Z", level: "DBG", event: "response.headers",   fields: [{ k: "X-Powered-By", v: "YASITH.SYS", vc: "text-secondary" }, { k: "X-Handle", v: siteConfig.handle, vc: "text-secondary" }] },
-  { time: "2026-04-18T00:04:47.014Z", level: "INF", event: "request_done",       fields: [{ k: "method", v: "GET", vc: "text-tertiary" }, { k: "path", v: "/api/v1/identity", vc: "text-secondary" }, { k: "status", v: "200", vc: "text-primary" }, { k: "latency", v: "14ms", vc: "text-on-surface" }, { k: "bytes", v: "842" }] },
+  { time: "2026-04-18T00:04:47.011Z", level: "DBG", event: "response.headers",   fields: [{ k: "X-Powered-By", v: siteConfig.branding, vc: "text-secondary" }, { k: "X-Handle", v: siteConfig.handle, vc: "text-secondary" }] },
+  { time: "2026-04-18T00:04:47.014Z", level: "INF", event: "request_done",       fields: [{ k: "method", v: "GET", vc: "text-tertiary" }, { k: "path", v: "/api/v1/identity", vc: "text-secondary" }, { k: "status", v: "200", vc: "text-primary" }, { k: "latency", v: siteConfig.stats.latency, vc: "text-on-surface" }, { k: "bytes", v: "842" }] },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────
@@ -114,7 +114,7 @@ export function SystemLog({ triggered = false }: { triggered?: boolean }) {
     <div className="mt-6 bg-black border border-[#494847]/10">
 
       {/* Header bar */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 border-b border-[#494847]/20 font-mono text-[10px]">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 border-b border-[#494847]/20 font-mono text-[10px]">
         <span className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           <span className="text-primary font-bold tracking-widest">LIVE_SYSTEM_OUTPUT</span>

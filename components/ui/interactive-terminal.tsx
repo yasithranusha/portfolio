@@ -38,40 +38,33 @@ export function InteractiveTerminal({
   const [cwd,            setCwd]            = useState(initialCwd);
   const [typingText,     setTypingText]     = useState<string | null>(null);
   const [typingCwd,      setTypingCwd]      = useState(initialCwd);
-  // When initialHistory is provided, start immediately ready (no animation needed)
-  const [ready,          setReady]          = useState(!!initialHistory);
+  // When initialHistory is provided or no commands exist, start immediately ready (no animation needed)
+  const [ready,          setReady]          = useState(!!initialHistory || initialCommands.length === 0);
   const [input,          setInput]          = useState("");
   const [cmdHistory,     setCmdHistory]     = useState<string[]>([]);
   const [histIdx,        setHistIdx]        = useState(-1);
   const [focused,        setFocused]        = useState(false);
   const [completionHint, setCompletionHint] = useState<string[] | null>(null);
+  const [hasInteracted,  setHasInteracted]  = useState(false);
 
   const bodyRef     = useRef<HTMLDivElement>(null);
   const inputRef    = useRef<HTMLInputElement>(null);
   // Ref so boot effect and runInput always see the latest posts without stale closure
   const postsRef    = useRef(posts);
   // Captured once at mount — determines whether to skip boot animation
-  const skipBootRef = useRef(!!initialHistory);
+  const skipBootRef = useRef(!!initialHistory || initialCommands.length === 0);
 
   useEffect(() => { postsRef.current = posts; }, [posts]);
 
-  // Scroll to bottom whenever content changes or user types — like a real terminal
   useEffect(() => {
+    if (!hasInteracted) return;
     const el = bodyRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [history, typingText, ready, input]);
+  }, [history, typingText, ready, input, hasInteracted]);
 
   // Boot sequence
   useEffect(() => {
-    if (skipBootRef.current) {
-      // Content pre-rendered from server — just focus the input
-      setTimeout(() => inputRef.current?.focus(), 100);
-      return;
-    }
-    if (initialCommands.length === 0) {
-      setReady(true);
-      return;
-    }
+    if (skipBootRef.current) return;
 
     let cancelled = false;
     let animCwd   = initialCwd;
@@ -108,7 +101,6 @@ export function InteractiveTerminal({
       }
       if (!cancelled) {
         setReady(true);
-        setTimeout(() => inputRef.current?.focus(), 60);
       }
     }
 
@@ -131,6 +123,7 @@ export function InteractiveTerminal({
     setHistIdx(-1);
     setInput("");
     setCompletionHint(null);
+    setHasInteracted(true);
   }, [input, cwd]);
 
   const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -166,7 +159,12 @@ export function InteractiveTerminal({
   return (
     <div
       className={`flex flex-col bg-black border border-[#494847]/20 font-mono text-xs overflow-hidden ${className}`}
-      onClick={() => ready && inputRef.current?.focus()}
+      onClick={() => {
+        if (ready) {
+          setHasInteracted(true);
+          inputRef.current?.focus();
+        }
+      }}
     >
       {/* Stoplight header */}
       <div className="h-8 bg-[#1a1919] px-4 flex items-center justify-between border-b border-[#494847]/10 flex-shrink-0">
@@ -219,7 +217,7 @@ export function InteractiveTerminal({
             <span className="text-primary select-none flex-shrink-0">{makePrompt(typingCwd)}</span>
             <span>
               <span className="text-on-surface">{typingText}</span>
-              <span className="inline-block w-[7px] h-[13px] bg-primary cursor-blink align-middle" />
+              <span className="inline-block w-[0.4375rem] h-[0.8125rem] bg-primary cursor-blink align-middle" />
             </span>
           </div>
         )}
@@ -243,7 +241,7 @@ export function InteractiveTerminal({
             <span>
               <span className="text-on-surface">{input}</span>
               <span
-                className={`inline-block w-[7px] h-[13px] align-middle ${
+                className={`inline-block w-[0.4375rem] h-[0.8125rem] align-middle ${
                   focused ? "bg-primary cursor-blink" : "bg-primary/30"
                 }`}
               />

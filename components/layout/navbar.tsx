@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileMenu } from "./mobile-menu";
+import { siteConfig } from "@/config/site";
 
 export function Navbar() {
   return (
@@ -7,7 +8,7 @@ export function Navbar() {
       {/* Left: logo + nav links */}
       <div className="flex items-center gap-3 md:gap-4">
         <Link href="/" className="text-[#55fe7e] font-bold tracking-tighter text-base">
-          YASITH.SYS
+          {siteConfig.branding}
         </Link>
       </div>
 
@@ -19,7 +20,7 @@ export function Navbar() {
         
         <div className="hidden sm:flex items-center gap-3">
           <form 
-            action="https://github.com/yasithranusha" 
+            action={siteConfig.socials.github} 
             target="_blank"
             className="flex items-center bg-[#262626] px-3 py-1 gap-2 border border-[#494847]/20"
           >

@@ -62,7 +62,7 @@ const README_CAT: TerminalLine[] = [
   { text: "" },
   { text: "Cloud-native portfolio. Fork-friendly. Kernel aesthetic.", color: "text-on-surface-variant" },
   { text: "" },
-  { text: "Run ./yasith.sh for system identity manifest.",            color: "text-tertiary" },
+  { text: `Run ./${siteConfig.terminal.scriptName} for system identity manifest.`,            color: "text-tertiary" },
   { text: "Explore ~/archives for blog posts.",                       color: "text-tertiary" },
 ];
 
@@ -71,7 +71,7 @@ const HOME_LS_LA: TerminalLine[] = [
   { text: "drwxr-xr-x  4 root  staff  128  APR 15 2026  .",                  color: "text-on-surface" },
   { text: "drwxr-xr-x  8 root  staff  256  APR 15 2026  ..",                 color: "text-on-surface" },
   { text: "drwxr-xr-x  2 root  staff   64  APR 15 2026  archives",           color: "text-secondary" },
-  { text: "-rwxr-xr-x  1 root  staff  512  APR 15 2026  yasith.sh",          color: "text-primary" },
+  { text: `-rwxr-xr-x  1 root  staff  512  APR 15 2026  ${siteConfig.terminal.scriptName}`,          color: "text-primary" },
   { text: "-rw-r--r--  1 root  staff  128  APR 15 2026  readme.md",          color: "text-on-surface" },
 ];
 
@@ -116,9 +116,9 @@ const HELP_LINES: TerminalLine[] = [
   { text: "  ls [-la] [-n NUM]                 List files, sorted by date (newest first)", color: "text-on-surface-variant" },
   { text: "  cd <dir>                          Change directory (archives, ~, ..)", color: "text-on-surface-variant" },
   { text: "  cat <file>                        Read a file",                       color: "text-on-surface-variant" },
-  { text: "  ./yasith.sh                       Run identity manifest (in ~/)",     color: "text-on-surface-variant" },
+  { text: `  ./${siteConfig.terminal.scriptName}                       Run identity manifest (in ~/)`,     color: "text-on-surface-variant" },
   { text: "  grep <pattern>                    Search blog posts",                 color: "text-on-surface-variant" },
-  { text: "  curl yasith.live/api/v1/identity  Fetch identity JSON",               color: "text-on-surface-variant" },
+  { text: `  curl ${siteConfig.domain}${siteConfig.terminal.identityEndpoint}  Fetch identity JSON`,               color: "text-on-surface-variant" },
   { text: "  pwd                               Print working directory",           color: "text-on-surface-variant" },
   { text: "  whoami                            Print current user",               color: "text-on-surface-variant" },
   { text: "  clear                             Clear terminal output",            color: "text-on-surface-variant" },
@@ -184,7 +184,7 @@ export function exec(
     const detailed = args.includes("-l");
     if (currentCwd === "~") {
       if (detailed) return { output: HOME_LS_LA, nextCwd };
-      return { output: [{ text: "archives   yasith.sh   readme.md", color: "text-on-surface" }], nextCwd };
+      return { output: [{ text: `archives   ${siteConfig.terminal.scriptName}   readme.md`, color: "text-on-surface" }], nextCwd };
     }
     if (posts.length === 0) {
       return { output: [{ text: "(no posts — check Notion connection)", color: "text-on-surface-variant" }], nextCwd };
@@ -215,7 +215,7 @@ export function exec(
   if (cmd === "cat") {
     if (!args) return { output: [{ text: "usage: cat <file>", color: "text-error" }], nextCwd };
     if (currentCwd === "~") {
-      if (args === "yasith.sh") return { output: SCRIPT_CAT, nextCwd };
+      if (args === siteConfig.terminal.scriptName) return { output: SCRIPT_CAT, nextCwd };
       if (args === "readme.md") return { output: README_CAT, nextCwd };
       return { output: [{ text: `cat: ${args}: No such file or directory`, color: "text-error" }], nextCwd };
     }
@@ -235,9 +235,9 @@ export function exec(
     };
   }
 
-  if (trimmed === "./yasith.sh") {
+  if (trimmed === `./${siteConfig.terminal.scriptName}`) {
     if (currentCwd === "~") return { output: SCRIPT_RUN, nextCwd };
-    return { output: [{ text: `bash: ./yasith.sh: No such file or directory (try cd ~)`, color: "text-error" }], nextCwd };
+    return { output: [{ text: `bash: ./${siteConfig.terminal.scriptName}: No such file or directory (try cd ~)`, color: "text-error" }], nextCwd };
   }
 
   if (cmd === "grep") {
@@ -252,7 +252,7 @@ export function exec(
   }
 
   if (cmd === "curl") {
-    if (!args.includes("yasith.live"))
+    if (!args.includes(siteConfig.domain))
       return { output: [{ text: `curl: (6) Could not resolve host: ${args}`, color: "text-error" }], nextCwd };
     if (args.includes("/api/v1/sudo"))
       return { output: CURL_SUDO_OUTPUT, nextCwd };
@@ -281,7 +281,7 @@ export function getCompletions(input: string, cwd: string, posts: NotionPost[]):
   const spaceIdx = trimmed.indexOf(" ");
 
   if (spaceIdx === -1) {
-    const COMMANDS = ["ls", "cd", "cat", "curl", "clear", "grep", "help", "pwd", "whoami", "./yasith.sh"];
+    const COMMANDS = ["ls", "cd", "cat", "curl", "clear", "grep", "help", "pwd", "whoami", `./${siteConfig.terminal.scriptName}`];
     return COMMANDS.filter((c) => c.startsWith(trimmed) && c !== trimmed);
   }
 
@@ -295,13 +295,13 @@ export function getCompletions(input: string, cwd: string, posts: NotionPost[]):
 
   if (cmd === "cat") {
     const files = cwd === "~"
-      ? ["yasith.sh", "readme.md"]
+      ? [siteConfig.terminal.scriptName, "readme.md"]
       : posts.map((p) => `${p.slug}.md`);
     return files.filter((f) => f.startsWith(argPrefix)).map((f) => `cat ${f}`);
   }
 
   if (cmd === "curl") {
-    return ["yasith.live/api/v1/identity"]
+    return [`${siteConfig.domain}${siteConfig.terminal.identityEndpoint}`]
       .filter((u) => u.startsWith(argPrefix))
       .map((u) => `curl ${u}`);
   }

@@ -26,6 +26,8 @@ export type NotionPost = {
   cover:    string;
 };
 
+export type GitHubRepo = { label: string; url: string };
+
 export type Project = {
   id:          string;
   slug:        string;
@@ -33,6 +35,7 @@ export type Project = {
   description: string;
   tags:        string[];
   github:      string;
+  githubRepos: GitHubRepo[];
   live:        string;
   status:      "online" | "offline" | "warn";
   featured:    boolean;
@@ -68,15 +71,16 @@ interface BlogPostProps {
 }
 
 interface ProjectProps {
-  Slug?:        TitleProp;    // title-type field in the Projects DB
-  Title?:       TitleProp;
-  Description?: RichTextProp;
-  Tags?:        MultiSelectProp;
-  Tag?:         MultiSelectProp;
-  GitHub?:      UrlProp;
-  Live?:        UrlProp;
-  Status?:      SelectOrStatusProp;
-  Featured?:    CheckboxProp;
+  Slug?:          TitleProp;
+  Title?:         TitleProp;
+  Description?:   RichTextProp;
+  Tags?:          MultiSelectProp;
+  Tag?:           MultiSelectProp;
+  GitHub_Repos?:  RichTextProp;
+  Live?:          UrlProp;
+  Status?:        SelectOrStatusProp;
+  Featured?:      CheckboxProp;
+  Published?:     CheckboxProp;
 }
 
 // ─── Mappers ───────────────────────────────────────────────────────
@@ -120,6 +124,18 @@ function pageToProject(page: PageObjectResponse): Project {
     props.Title?.title[0]?.plain_text ??
     "Untitled";
   const slug = title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const reposText = props.GitHub_Repos?.rich_text.map((r) => r.plain_text).join("") ?? "";
+  const githubRepos: GitHubRepo[] = reposText
+    .split("\n")
+    .map((line) => {
+      const idx = line.indexOf(":");
+      if (idx === -1) return null;
+      const label = line.slice(0, idx).trim();
+      const url   = line.slice(idx + 1).trim();
+      return label && url.startsWith("http") ? { label, url } : null;
+    })
+    .filter((r): r is GitHubRepo => r !== null);
+
   return {
     id:          page.id,
     slug,
@@ -128,8 +144,9 @@ function pageToProject(page: PageObjectResponse): Project {
     tags:        props.Tags?.multi_select.map((t) => t.name)
               ?? props.Tag?.multi_select.map((t) => t.name)
               ?? [],
-    github:      props.GitHub?.url  ?? "",
-    live:        props.Live?.url    ?? "",
+    github:      githubRepos[0]?.url ?? "",
+    githubRepos,
+    live:        props.Live?.url ?? "",
     status,
     featured:    props.Featured?.checkbox ?? false,
   };
@@ -200,6 +217,7 @@ export const fetchProjects = unstable_cache(
     try {
       const response = await notion.dataSources.query({
         data_source_id: process.env.NOTION_PROJECTS_DB_ID,
+        filter: { property: "Published", checkbox: { equals: true } },
         sorts: [{ property: "Featured", direction: "descending" }],
       });
       return response.results
