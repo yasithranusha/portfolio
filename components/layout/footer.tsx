@@ -4,7 +4,7 @@ import { siteConfig } from "@/config/site";
 export function Footer() {
   return (
     <footer className="relative w-full flex flex-col sm:flex-row justify-between items-center px-4 py-3 bg-[#000000] border-t border-[#494847]/20 font-mono text-[10px] md:pl-64">
-      <div className="text-[#494847] order-2 sm:order-1 uppercase">
+      <div className="text-outline order-2 sm:order-1 uppercase">
         © {new Date().getFullYear()} {siteConfig.branding} | UPTIME: {siteConfig.stats.uptime} |{" "}
         <span className="text-[#55fe7e] animate-pulse">SYSTEM_READY</span>
       </div>
@@ -21,11 +21,11 @@ export function Footer() {
           href={siteConfig.socials.linkedin}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#494847] hover:text-[#55fe7e] transition-colors uppercase"
+          className="text-outline hover:text-[#55fe7e] transition-colors uppercase"
         >
           LINKEDIN_URI
         </Link>
-        <div className="flex items-center text-[#494847] italic ml-2">
+        <div className="flex items-center text-outline italic ml-2">
           <span className="mr-1">{siteConfig.handle}@kernel:~$</span>
           <span className="w-1.5 h-3 bg-[#55fe7e] cursor-blink inline-block" />
         </div>

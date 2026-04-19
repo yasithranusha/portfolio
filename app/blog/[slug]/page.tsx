@@ -89,12 +89,12 @@ export default async function BlogPostPage({ params }: PageProps) {
       </div>
 
       {/* Post header */}
-      <header className="mb-10 space-y-3 pb-8 border-b border-[#494847]/20">
+      <header className="mb-10 space-y-3 pb-8 border-b border-outline-variant/20">
         <SectionLabel>log_entry</SectionLabel>
         <h1 className="text-2xl sm:text-3xl font-bold font-sans text-white leading-tight">
           {post.title}
         </h1>
-        <div className="flex flex-wrap items-center gap-4 text-[10px] font-mono text-[#494847]">
+        <div className="flex flex-wrap items-center gap-4 text-[10px] font-mono text-outline">
           <span>{date}</span>
           <span>[{post.readTime}]</span>
         </div>
@@ -116,7 +116,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <PostRenderer content={post.content} />
 
       {/* Footer nav */}
-      <div className="mt-16 pt-8 border-t border-[#494847]/20">
+      <div className="mt-16 pt-8 border-t border-outline-variant/20">
         <Link
           href="/blog"
           className="text-[11px] font-mono text-[#adaaaa] hover:text-[#55fe7e] transition-colors"

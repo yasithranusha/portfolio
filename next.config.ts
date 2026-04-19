@@ -9,6 +9,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: ['motion'],
+  },
   allowedDevOrigins: ['192.168.1.2'],
   images: {
     remotePatterns: [

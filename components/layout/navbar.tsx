@@ -27,6 +27,7 @@ export function Navbar() {
           >
             <span className="text-[#55fe7e] text-[10px]">$</span>
             <input
+              aria-label="Search GitHub"
               className="bg-transparent border-none outline-none text-[10px] w-32 text-[#55fe7e] placeholder:text-[#494847] font-mono"
               placeholder="SEARCH_GITHUB..."
               type="text"

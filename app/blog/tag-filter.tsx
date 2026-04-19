@@ -1,13 +1,15 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { type NotionPost } from "@/lib/notion";
 
 interface TagFilterProps {
   posts: NotionPost[];
   allTags: string[];
+  page: number;
+  activeTag: string | null;
+  query: string;
 }
+
+const ITEMS_PER_PAGE = 8;
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return "---";
@@ -16,13 +18,16 @@ function formatDate(dateStr: string): string {
     .toUpperCase();
 }
 
-const ITEMS_PER_PAGE = 8;
+function buildUrl(params: { page?: number; tag?: string | null; q?: string }): string {
+  const p = new URLSearchParams();
+  if (params.q) p.set("q", params.q);
+  if (params.tag) p.set("tag", params.tag);
+  if (params.page && params.page > 1) p.set("page", String(params.page));
+  const str = p.toString();
+  return `/blog${str ? `?${str}` : ""}`;
+}
 
-export function TagFilter({ posts, allTags }: TagFilterProps) {
-  const [activeTag, setActiveTag] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-
+export function TagFilter({ posts, allTags, page, activeTag, query }: TagFilterProps) {
   const filtered = posts.filter((p) => {
     const matchesTag = activeTag ? p.tags.includes(activeTag) : true;
     const matchesQuery = query
@@ -31,68 +36,69 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
     return matchesTag && matchesQuery;
   });
 
-  useEffect(() => { setPage(1); }, [activeTag, query]);
-
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
 
   return (
     <>
       {/* Search + Sort controls */}
       <div className="flex flex-col md:flex-row items-center gap-4 mb-8 bg-surface-container p-4">
-        <div className="relative flex-1 w-full">
+        <form action="/blog" method="GET" className="relative flex-1 w-full">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary text-xs">$</span>
+          {activeTag && <input type="hidden" name="tag" value={activeTag} />}
           <input
-            className="w-full bg-[#000000] border-b border-[#494847]/30 text-xs pl-8 py-3 focus:outline-none focus:border-secondary transition-colors font-mono text-on-surface placeholder:text-[#494847]"
+            name="q"
+            defaultValue={query}
+            aria-label="Filter articles"
+            className="w-full bg-surface-container-lowest border-b border-outline-variant/30 text-xs pl-8 py-3 focus:outline-none focus:border-secondary transition-colors font-mono text-on-surface placeholder:text-outline-variant"
             placeholder="filter --archive --tag architecture"
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            autoComplete="off"
           />
-        </div>
+        </form>
         <div className="flex gap-2 w-full md:w-auto">
-          <button className="flex-1 md:flex-none border border-[#494847]/30 px-4 py-2 text-[10px] hover:bg-[#262626] uppercase font-mono text-on-surface-variant cursor-pointer">
+          <div className="flex-1 md:flex-none border border-outline-variant/30 px-4 py-2 text-[10px] uppercase font-mono text-on-surface-variant">
             Sort: [DATE]
-          </button>
-          <button className="flex-1 md:flex-none border border-[#494847]/30 px-4 py-2 text-[10px] hover:bg-[#262626] uppercase font-mono text-on-surface-variant cursor-pointer">
+          </div>
+          <div className="flex-1 md:flex-none border border-outline-variant/30 px-4 py-2 text-[10px] uppercase font-mono text-on-surface-variant">
             View: [LIST]
-          </button>
+          </div>
         </div>
       </div>
 
       {/* Tag pills */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
-          <button
-            onClick={() => setActiveTag(null)}
-            className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors cursor-pointer ${
+          <Link
+            href={buildUrl({ q: query })}
+            className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors ${
               !activeTag
                 ? "border-primary/50 text-primary bg-primary/5"
-                : "border-[#494847]/40 text-[#494847] hover:text-on-surface-variant"
+                : "border-outline-variant/40 text-outline hover:text-on-surface-variant"
             }`}
           >
             ALL
-          </button>
+          </Link>
           {allTags.map((tag) => (
-            <button
+            <Link
               key={tag}
-              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-              className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors cursor-pointer ${
+              href={buildUrl({ q: query, tag: activeTag === tag ? null : tag })}
+              className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors ${
                 activeTag === tag
                   ? "border-tertiary/50 text-tertiary bg-tertiary/5"
-                  : "border-[#494847]/40 text-[#494847] hover:text-tertiary"
+                  : "border-outline-variant/40 text-outline hover:text-tertiary"
               }`}
             >
               #{tag}
-            </button>
+            </Link>
           ))}
         </div>
       )}
 
       {/* Archive table */}
-      <div className="border border-[#494847]/20 bg-surface-container-low overflow-hidden">
+      <div className="border border-outline-variant/20 bg-surface-container-low overflow-hidden">
         {/* Column headers */}
-        <div className="hidden md:flex px-6 py-2 bg-[#262626] border-b border-[#494847]/20 text-[10px] font-bold text-[#494847] tracking-widest uppercase font-mono">
+        <div className="hidden md:flex px-6 py-2 bg-surface-container-highest border-b border-outline-variant/20 text-[10px] font-bold text-outline tracking-widest uppercase font-mono">
           <div className="w-28 shrink-0">DATE</div>
           <div className="flex-1">TITLE</div>
           <div className="hidden lg:block w-44 shrink-0">TAGS</div>
@@ -100,9 +106,9 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
         </div>
 
         {/* Rows */}
-        <div className="divide-y divide-[#494847]/10 font-mono">
+        <div className="divide-y divide-outline-variant/10 font-mono">
           {filtered.length === 0 ? (
-            <div className="px-6 py-8 text-center text-[10px] text-[#494847]">
+            <div className="px-6 py-8 text-center text-[10px] text-outline">
               // no entries match filter
             </div>
           ) : (
@@ -110,9 +116,9 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="flex flex-col md:flex-row md:items-center px-6 py-4 hover:bg-[#262626] group transition-colors gap-2 md:gap-0"
+                className="flex flex-col md:flex-row md:items-center px-6 py-4 hover:bg-surface-container-highest group transition-colors gap-2 md:gap-0"
               >
-                <div className="w-28 shrink-0 text-[10px] text-[#494847]">
+                <div className="w-28 shrink-0 text-[10px] text-outline">
                   {formatDate(post.date)}
                 </div>
                 <div className="flex-1 min-w-0 text-sm font-semibold text-on-surface group-hover:text-primary transition-colors truncate">
@@ -120,12 +126,12 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
                 </div>
                 <div className="hidden lg:flex w-44 shrink-0 flex-wrap gap-1.5">
                   {post.tags.slice(0, 2).map((tag) => (
-                    <span key={tag} className="text-[9px] border border-[#494847]/40 px-2 py-0.5 text-tertiary">
+                    <span key={tag} className="text-[9px] border border-outline-variant/40 px-2 py-0.5 text-tertiary">
                       #{tag}
                     </span>
                   ))}
                 </div>
-                <div className="w-16 shrink-0 text-right text-[10px] text-[#494847]">
+                <div className="w-16 shrink-0 text-right text-[10px] text-outline">
                   {post.readTime}
                 </div>
               </Link>
@@ -134,27 +140,27 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
         </div>
 
         {/* Pagination footer */}
-        <div className="bg-surface-container px-6 py-3 border-t border-[#494847]/20">
-          <div className="flex items-center justify-between text-[10px] text-[#494847] font-mono">
+        <div className="bg-surface-container px-6 py-3 border-t border-outline-variant/20">
+          <div className="flex items-center justify-between text-[10px] text-outline font-mono">
             <div>TOTAL {filtered.length} ARTICLES FOUND</div>
             <div className="flex gap-4 items-center">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className={`hover:text-primary transition-colors ${page === 1 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
-              >
-                [PREV]
-              </button>
+              {safePage > 1 ? (
+                <Link href={buildUrl({ q: query, tag: activeTag, page: safePage - 1 })} className="hover:text-primary transition-colors">
+                  [PREV]
+                </Link>
+              ) : (
+                <span className="opacity-30">[PREV]</span>
+              )}
               <span className="text-on-surface">
-                PAGE {String(page).padStart(2, "0")} / {String(totalPages).padStart(2, "0")}
+                PAGE {String(safePage).padStart(2, "0")} / {String(totalPages).padStart(2, "0")}
               </span>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className={`hover:text-primary transition-colors ${page === totalPages ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
-              >
-                [NEXT]
-              </button>
+              {safePage < totalPages ? (
+                <Link href={buildUrl({ q: query, tag: activeTag, page: safePage + 1 })} className="hover:text-primary transition-colors">
+                  [NEXT]
+                </Link>
+              ) : (
+                <span className="opacity-30">[NEXT]</span>
+              )}
             </div>
           </div>
         </div>

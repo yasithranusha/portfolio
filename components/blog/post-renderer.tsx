@@ -43,7 +43,7 @@ function markdownToHtml(md: string): string {
     .replace(/\*(.+?)\*/g, '<em class="text-[#adaaaa]">$1</em>')
     .replace(/`([^`]+)`/g, '<code class="text-[#85ecff] bg-[#131313] px-1 text-[0.85em]">$1</code>')
     .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-[#5db4fe] hover:text-[#85ecff] underline" target="_blank" rel="noopener noreferrer">$1</a>')
-    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-[#494847] pl-4 text-[#adaaaa] my-4">$1</blockquote>')
+    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-outline-variant pl-4 text-[#adaaaa] my-4">$1</blockquote>')
     .replace(/^- (.+)$/gm, '<li class="text-[#adaaaa] ml-4 list-none before:content-[\'>\'] before:mr-2 before:text-[#55fe7e]">$1</li>')
     .replace(/\n\n/g, '</p><p class="text-[#adaaaa] leading-7 my-3">')
     .replace(/^(?!<[hlbp])(.+)$/gm, '<p class="text-[#adaaaa] leading-7 my-3">$1</p>');
@@ -54,7 +54,7 @@ export async function PostRenderer({ content }: PostRendererProps) {
 
   if (!html) {
     return (
-      <p className="font-mono text-sm text-[#494847] italic">// no content yet</p>
+      <p className="font-mono text-sm text-outline italic">// no content yet</p>
     );
   }
 
