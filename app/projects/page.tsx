@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { fetchProjects } from "@/lib/notion";
 import Link from "next/link";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "REGISTRY // Technical Manifest",
@@ -18,8 +19,6 @@ const statusStyles: Record<"online" | "warn" | "offline", StatusStyle> = {
 export default async function ProjectsPage() {
   const projects = await fetchProjects();
   const online  = projects.filter((p) => p.status === "online").length;
-  const avgLatency = "14ms";
-
   return (
     <div className="mt-12 mb-10 p-4 sm:p-8 min-h-screen">
       <div className="max-w-7xl mx-auto">

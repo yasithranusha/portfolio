@@ -1,11 +1,11 @@
 import { siteConfig } from "@/config/site";
-import { fetchPosts, fetchProjects } from "@/lib/notion";
+import { fetchPosts } from "@/lib/notion";
 import Link from "next/link";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
-import { MotionDiv, MotionSpan } from "@/components/ui/motion";
+import { MotionDiv } from "@/components/ui/motion";
 
 export default async function HomePage() {
-  const [posts, projects] = await Promise.all([fetchPosts(), fetchProjects()]);
+  const [posts] = await Promise.all([fetchPosts()]);
   const recentPosts = posts.slice(0, 3);
 
   return (

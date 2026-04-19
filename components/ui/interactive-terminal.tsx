@@ -38,8 +38,8 @@ export function InteractiveTerminal({
   const [cwd,            setCwd]            = useState(initialCwd);
   const [typingText,     setTypingText]     = useState<string | null>(null);
   const [typingCwd,      setTypingCwd]      = useState(initialCwd);
-  // When initialHistory is provided, start immediately ready (no animation needed)
-  const [ready,          setReady]          = useState(!!initialHistory);
+  // When initialHistory is provided or no commands exist, start immediately ready (no animation needed)
+  const [ready,          setReady]          = useState(!!initialHistory || initialCommands.length === 0);
   const [input,          setInput]          = useState("");
   const [cmdHistory,     setCmdHistory]     = useState<string[]>([]);
   const [histIdx,        setHistIdx]        = useState(-1);
@@ -52,7 +52,7 @@ export function InteractiveTerminal({
   // Ref so boot effect and runInput always see the latest posts without stale closure
   const postsRef    = useRef(posts);
   // Captured once at mount — determines whether to skip boot animation
-  const skipBootRef = useRef(!!initialHistory);
+  const skipBootRef = useRef(!!initialHistory || initialCommands.length === 0);
 
   useEffect(() => { postsRef.current = posts; }, [posts]);
 
@@ -64,15 +64,7 @@ export function InteractiveTerminal({
 
   // Boot sequence
   useEffect(() => {
-    if (skipBootRef.current) {
-      // Content pre-rendered from server — ready immediately
-      setReady(true);
-      return;
-    }
-    if (initialCommands.length === 0) {
-      setReady(true);
-      return;
-    }
+    if (skipBootRef.current) return;
 
     let cancelled = false;
     let animCwd   = initialCwd;

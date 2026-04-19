@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
 import { SystemLog } from "@/components/about/system-log";
+import { siteConfig } from "@/config/site";
 
 export function ConnectLayout({ sidePanel }: { sidePanel: React.ReactNode }) {
   const [curled, setCurled] = useState(false);
