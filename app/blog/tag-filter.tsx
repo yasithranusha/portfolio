@@ -51,10 +51,10 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
           />
         </div>
         <div className="flex gap-2 w-full md:w-auto">
-          <button className="flex-1 md:flex-none border border-[#494847]/30 px-4 py-2 text-[10px] hover:bg-[#262626] uppercase font-mono text-on-surface-variant">
+          <button className="flex-1 md:flex-none border border-[#494847]/30 px-4 py-2 text-[10px] hover:bg-[#262626] uppercase font-mono text-on-surface-variant cursor-pointer">
             Sort: [DATE]
           </button>
-          <button className="flex-1 md:flex-none border border-[#494847]/30 px-4 py-2 text-[10px] hover:bg-[#262626] uppercase font-mono text-on-surface-variant">
+          <button className="flex-1 md:flex-none border border-[#494847]/30 px-4 py-2 text-[10px] hover:bg-[#262626] uppercase font-mono text-on-surface-variant cursor-pointer">
             View: [LIST]
           </button>
         </div>
@@ -65,7 +65,7 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
         <div className="flex flex-wrap gap-2 mb-6">
           <button
             onClick={() => setActiveTag(null)}
-            className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors ${
+            className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors cursor-pointer ${
               !activeTag
                 ? "border-primary/50 text-primary bg-primary/5"
                 : "border-[#494847]/40 text-[#494847] hover:text-on-surface-variant"
@@ -77,7 +77,7 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
             <button
               key={tag}
               onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-              className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors ${
+              className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors cursor-pointer ${
                 activeTag === tag
                   ? "border-tertiary/50 text-tertiary bg-tertiary/5"
                   : "border-[#494847]/40 text-[#494847] hover:text-tertiary"
@@ -141,7 +141,7 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className={`hover:text-primary transition-colors ${page === 1 ? "opacity-30 cursor-not-allowed" : ""}`}
+                className={`hover:text-primary transition-colors ${page === 1 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
               >
                 [PREV]
               </button>
@@ -151,7 +151,7 @@ export function TagFilter({ posts, allTags }: TagFilterProps) {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className={`hover:text-primary transition-colors ${page === totalPages ? "opacity-30 cursor-not-allowed" : ""}`}
+                className={`hover:text-primary transition-colors ${page === totalPages ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
               >
                 [NEXT]
               </button>
