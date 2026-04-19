@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { siteConfig } from "./config/site";
 
 const securityHeaders = [
   { key: "X-Content-Type-Options",   value: "nosniff" },
@@ -20,6 +21,16 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "notion.so" },
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host" as const, value: `blog.${siteConfig.domain}` }],
+        destination: `${siteConfig.url}blog/:path*`,
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [
