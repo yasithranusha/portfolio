@@ -25,17 +25,17 @@ export function ErrorDisplay({ title = "KERNEL PANIC", message, digest, reset }:
               UNHANDLED EXCEPTION — PROCESS TERMINATED
             </div>
 
-            <div className="text-[#adaaaa] text-xs space-y-1">
+            <div className="text-on-surface-variant text-xs space-y-1">
               {message && (
                 <p className="text-error/80 break-words">{message}</p>
               )}
               {digest && (
-                <p className="text-[#494847]">digest: {digest}</p>
+                <p className="text-outline">digest: {digest}</p>
               )}
-              <p className="text-[#494847]">exit code: 1</p>
+              <p className="text-outline">exit code: 1</p>
             </div>
 
-            <div className="border-t border-[#494847]/20 pt-4 text-[10px] text-[#494847] space-y-1">
+            <div className="border-t border-outline-variant/20 pt-4 text-[10px] text-outline space-y-1">
               <p>SIGNAL: SIGABRT</p>
               <p>RECOVERY: manual restart required</p>
             </div>

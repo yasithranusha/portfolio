@@ -202,14 +202,20 @@ export function exec(
         output: [
           { text: `total ${displayed.length}${limit ? ` (showing ${displayed.length} of ${posts.length})` : ""}`, color: "text-on-surface-variant" },
           ...displayed.map((p) => ({
-            text: `-rwxr-xr-x  1 root  staff  ${p.readTime.replace("~", "").trim().padEnd(5)}  ${fmtDate(p.date)}  ${p.slug}.md`,
-            color: "text-on-surface" as const,
+            html: true,
+            text: `<a href="/blog/${p.slug}" class="block hover:bg-white/5 -mx-4 px-4"><span class="text-on-surface">-rwxr-xr-x  1 root  staff  ${p.readTime.replace("~", "").trim().padEnd(5)}  ${fmtDate(p.date)}  </span><span class="text-primary">` + p.slug + `.md</span></a>`,
           })),
         ],
         nextCwd,
       };
     }
-    return { output: displayed.map((p) => ({ text: `${p.slug}.md`, color: "text-secondary" as const })), nextCwd };
+    return {
+      output: displayed.map((p) => ({
+        html: true,
+        text: `<a href="/blog/${p.slug}" class="text-secondary block hover:bg-white/5 -mx-4 px-4">` + p.slug + `.md</a>`,
+      })),
+      nextCwd,
+    };
   }
 
   if (cmd === "cat") {

@@ -173,21 +173,25 @@ export default async function HomePage() {
                     href={`/blog/${post.slug}`}
                     className={`group flex flex-col md:flex-row md:items-center gap-4 bg-surface-container-low p-4 hover:bg-[#262626] transition-colors cursor-pointer border-l-2 border-transparent ${colors.border}`}
                   >
-                    <div className="text-[10px] text-on-surface-variant font-mono min-w-[140px]">
-                      [{post.date ? new Date(post.date).toISOString().replace("T", " ").slice(0, 16) : "----"}]
+                    <div className="flex items-start gap-4 md:contents">
+                      <div className="flex-1 md:contents">
+                        <div className="text-[10px] text-on-surface-variant font-mono min-w-[140px]">
+                          [{post.date ? new Date(post.date).toISOString().replace("T", " ").slice(0, 16) : "----"}]
+                        </div>
+                        <div className={`px-2 py-0.5 text-[10px] font-bold w-fit ${colors.badge}`}>
+                          {level}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className={`text-sm font-bold text-on-surface uppercase transition-colors ${colors.title}`}>
+                            {post.title}
+                          </h3>
+                          {post.excerpt && (
+                            <p className="text-xs text-on-surface-variant mt-1 line-clamp-1">{post.excerpt}</p>
+                          )}
+                        </div>
+                      </div>
+                      <Icon name="chevron_right" className="text-on-surface-variant group-hover:translate-x-1 transition-transform text-sm shrink-0 mt-0.5" />
                     </div>
-                    <div className={`px-2 py-0.5 text-[10px] font-bold w-fit ${colors.badge}`}>
-                      {level}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className={`text-sm font-bold text-on-surface uppercase transition-colors ${colors.title}`}>
-                        {post.title}
-                      </h3>
-                      {post.excerpt && (
-                        <p className="text-xs text-on-surface-variant mt-1 line-clamp-1">{post.excerpt}</p>
-                      )}
-                    </div>
-                    <Icon name="chevron_right" className="text-on-surface-variant group-hover:translate-x-1 transition-transform text-sm" />
                   </Link>
                 );
               })

@@ -29,7 +29,7 @@ export function SidebarNav({ items, icons }: SidebarNavProps) {
             className={`flex items-center gap-4 px-6 py-3 transition-all ${
               active
                 ? "bg-[#262626] text-[#55fe7e] border-l-4 border-[#55fe7e]"
-                : "text-[#494847] hover:text-[#adaaaa] hover:bg-[#131313]"
+                : "text-outline hover:text-on-surface-variant hover:bg-surface-container-low"
             }`}
           >
             <Icon name={icon} className="text-sm" />

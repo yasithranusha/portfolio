@@ -15,7 +15,7 @@ export default function AboutPage() {
     <div className="lg:flex-1 flex flex-col gap-4">
 
       {/* Identity card */}
-      <div className="bg-surface-container-low border border-[#494847]/20 p-5">
+      <div className="bg-surface-container-low border border-outline-variant/20 p-5">
         <div className="text-[10px] text-on-surface-variant mb-3 font-bold tracking-widest">IDENTITY_RECORD</div>
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -50,7 +50,7 @@ export default function AboutPage() {
       </div>
 
       {/* Social links */}
-      <div className="bg-surface-container-low border border-[#494847]/20 p-5">
+      <div className="bg-surface-container-low border border-outline-variant/20 p-5">
         <div className="text-[10px] text-on-surface-variant mb-3 font-bold tracking-widest">CONTACT_NODES</div>
         <div className="space-y-2">
           {Object.entries(siteConfig.socials).map(([platform, url]) => (
@@ -61,9 +61,9 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-[10px] font-mono text-on-surface-variant hover:text-secondary transition-colors group py-1"
             >
-              <span className="text-[#494847] group-hover:text-secondary">{">"}</span>
+              <span className="text-outline-variant group-hover:text-secondary">{">"}</span>
               <span className="uppercase tracking-widest font-bold">{platform}</span>
-              <span className="ml-auto text-[#494847] group-hover:text-secondary truncate max-w-[120px]">
+              <span className="ml-auto text-outline group-hover:text-secondary truncate max-w-[120px]">
                 {url.replace("https://", "")}
               </span>
             </Link>
@@ -72,15 +72,15 @@ export default function AboutPage() {
             href={`mailto:${siteConfig.email}`}
             className="flex items-center gap-2 text-[10px] font-mono text-on-surface-variant hover:text-primary transition-colors group py-1"
           >
-            <span className="text-[#494847] group-hover:text-primary">{">"}</span>
+            <span className="text-outline-variant group-hover:text-primary">{">"}</span>
             <span className="uppercase tracking-widest font-bold">EMAIL</span>
-            <span className="ml-auto text-[#494847] group-hover:text-primary">hello@...</span>
+            <span className="ml-auto text-outline group-hover:text-primary">hello@...</span>
           </Link>
         </div>
       </div>
 
       {/* Core Engineering Proficiencies */}
-      <div className="bg-surface-container-low border border-[#494847]/20 p-5">
+      <div className="bg-surface-container-low border border-outline-variant/20 p-5">
         <div className="text-[10px] text-on-surface-variant mb-3 font-bold tracking-widest">CORE_PROFICIENCY</div>
           {siteConfig.about.stats.map((stat) => (
             <div key={stat.label}>
@@ -108,7 +108,7 @@ export default function AboutPage() {
             <span className="opacity-30">/</span>
             <span className="bg-[#262626] px-2 py-0.5">ENDPOINT: /api/v1/identity</span>
           </div>
-          <h1 className="font-sans text-5xl md:text-7xl font-bold tracking-tighter text-white mb-4">
+          <h1 className="font-sans text-3xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-white mb-4">
             SYSTEM_IDENTITY /{" "}
             <span className="text-primary/40">CONNECT</span>
           </h1>

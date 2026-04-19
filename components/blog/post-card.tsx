@@ -16,20 +16,20 @@ export function PostCard({ post }: PostCardProps) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 py-3 border-b border-[#494847]/20 hover:bg-[#131313] transition-colors"
+      className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 py-3 border-b border-outline-variant/20 hover:bg-[#131313] transition-colors"
     >
       {/* Permissions / file info */}
-      <span className="hidden sm:inline text-[10px] font-mono text-[#494847] flex-shrink-0 select-none">
+      <span className="hidden sm:inline text-[10px] font-mono text-outline-variant flex-shrink-0 select-none">
         -rwxr-xr-x
       </span>
 
       {/* Date */}
-      <span className="text-[10px] font-mono text-[#494847] flex-shrink-0 w-28">
+      <span className="text-[10px] font-mono text-outline flex-shrink-0 w-28">
         [{formatDate(post.date)}]
       </span>
 
       {/* Title */}
-      <span className="flex-1 font-mono text-sm text-[#adaaaa] group-hover:text-[#55fe7e] transition-colors truncate">
+      <span className="flex-1 font-mono text-sm text-on-surface-variant group-hover:text-primary transition-colors truncate">
         {post.title.toLowerCase().replace(/\s+/g, "_")}.md
       </span>
 
@@ -43,7 +43,7 @@ export function PostCard({ post }: PostCardProps) {
       </div>
 
       {/* Read time */}
-      <span className="hidden sm:inline text-[10px] font-mono text-[#494847] flex-shrink-0 w-10 text-right">
+      <span className="hidden sm:inline text-[10px] font-mono text-outline flex-shrink-0 w-10 text-right">
         [{post.readTime}]
       </span>
     </Link>
