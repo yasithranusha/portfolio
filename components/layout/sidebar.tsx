@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { SidebarNav } from "./sidebar-nav";
+import { Icon } from "@/components/ui/icon";
 
 const sidebarIcons: Record<string, string> = {
   "/":        "account_tree",
@@ -16,7 +17,7 @@ export function Sidebar() {
       <div className="p-6 bg-[#131313] border-b border-[#494847]/10">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-[#262626] border border-[#55fe7e]/30 flex items-center justify-center flex-shrink-0">
-            <span className="material-symbols-outlined text-[#55fe7e] text-sm">terminal</span>
+            <Icon name="terminal" className="text-[#55fe7e] text-sm" />
           </div>
           <div>
             <div className="text-[#55fe7e] font-black font-mono text-xs tracking-wide">SYSTEM_EXPLORER</div>
@@ -40,11 +41,11 @@ export function Sidebar() {
         </a>
         <div className="mt-4 flex flex-col gap-2 font-mono text-[10px] uppercase">
           <Link href="/about" className="flex items-center gap-2 text-[#494847] hover:text-[#adaaaa] cursor-pointer transition-colors">
-            <span className="material-symbols-outlined text-xs">settings</span>
+            <Icon name="settings" className="text-xs" />
             SETTINGS
           </Link>
           <a href={`mailto:${siteConfig.email}`} className="flex items-center gap-2 text-[#494847] hover:text-[#ff7351] cursor-pointer transition-colors">
-            <span className="material-symbols-outlined text-xs">power_settings_new</span>
+            <Icon name="power_settings_new" className="text-xs" />
             DISCONNECT (MAIL)
           </a>
         </div>

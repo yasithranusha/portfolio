@@ -3,6 +3,7 @@ import { fetchPosts } from "@/lib/notion";
 import Link from "next/link";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
 import { MotionDiv } from "@/components/ui/motion";
+import { Icon } from "@/components/ui/icon";
 
 export default async function HomePage() {
   const [posts] = await Promise.all([fetchPosts()]);
@@ -73,7 +74,7 @@ export default async function HomePage() {
           >
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">CORE::TECH_STACK</span>
-              <span className="material-symbols-outlined text-primary text-xl">terminal</span>
+              <Icon name="terminal" className="text-primary text-xl" />
             </div>
             <div className="mt-8">
               <div className="flex flex-wrap gap-2 mb-2">
@@ -96,7 +97,7 @@ export default async function HomePage() {
           >
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">RUNTIME::EXPERIENCE</span>
-              <span className="material-symbols-outlined text-tertiary text-xl">work</span>
+              <Icon name="work" className="text-tertiary text-xl" />
             </div>
             <div className="mt-4">
               <div className="font-sans text-3xl font-bold text-on-surface">
@@ -116,7 +117,7 @@ export default async function HomePage() {
           >
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-bold text-on-surface-variant">CLOUD::INFRASTRUCTURE</span>
-              <span className="material-symbols-outlined text-error text-xl">cloud</span>
+              <Icon name="cloud" className="text-error text-xl" />
             </div>
             <div className="mt-4">
               <div className="flex flex-wrap gap-2 mb-2">
@@ -186,9 +187,7 @@ export default async function HomePage() {
                         <p className="text-xs text-on-surface-variant mt-1 line-clamp-1">{post.excerpt}</p>
                       )}
                     </div>
-                    <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform text-sm">
-                      chevron_right
-                    </span>
+                    <Icon name="chevron_right" className="text-on-surface-variant group-hover:translate-x-1 transition-transform text-sm" />
                   </Link>
                 );
               })
@@ -218,7 +217,7 @@ function FallbackLogEntries() {
           <div className="flex-1">
             <h3 className={`text-sm font-bold text-on-surface uppercase transition-colors ${e.title}`}>{e.text}</h3>
           </div>
-          <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform text-sm">chevron_right</span>
+          <Icon name="chevron_right" className="text-on-surface-variant group-hover:translate-x-1 transition-transform text-sm" />
         </div>
       ))}
     </>

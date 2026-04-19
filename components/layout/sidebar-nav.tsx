@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon } from "@/components/ui/icon";
 
 interface NavItem {
   label: string;
@@ -31,7 +32,7 @@ export function SidebarNav({ items, icons }: SidebarNavProps) {
                 : "text-[#494847] hover:text-[#adaaaa] hover:bg-[#131313]"
             }`}
           >
-            <span className="material-symbols-outlined text-sm">{icon}</span>
+            <Icon name={icon} className="text-sm" />
             {item.label}
           </Link>
         );
