@@ -51,6 +51,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: `${siteConfig.url}blog/${slug}`,
     },
+    other: {
+      "og:logo": `${siteConfig.url}icon.png`,
+    },
   };
 }
 

@@ -68,6 +68,9 @@ export const metadata: Metadata = {
       "max-snippet":       -1,
     },
   },
+  other: {
+    "og:logo": `${siteConfig.url}icon.png`,
+  },
 };
 
 export default function RootLayout({
