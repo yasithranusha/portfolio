@@ -12,6 +12,10 @@ const notion = new Client({
   logLevel: LogLevel.ERROR,
 });
 
+if (!process.env.NOTION_TOKEN && process.env.NODE_ENV === "production") {
+  console.error("[notion] CRITICAL: NOTION_TOKEN is missing in production environment.");
+}
+
 // notion-to-md v3 accepts Client from @notionhq/client — no cast needed
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
@@ -36,15 +40,17 @@ type NotionClient = Client & {
  */
 const dataSourceMap = new Map<string, string>();
 
-async function getDataSourceId(databaseId: string): Promise<string | null> {
+async function getDataSourceId(databaseId: string | undefined): Promise<string | null> {
+  if (!databaseId) return null;
   if (dataSourceMap.has(databaseId)) return dataSourceMap.get(databaseId)!;
+  
   try {
     const db = await (notion.databases as unknown as { retrieve: (args: { database_id: string }) => Promise<unknown> }).retrieve({ database_id: databaseId });
     const dsId = (db as { data_sources?: Array<{ id: string }> }).data_sources?.[0]?.id ?? databaseId;
     dataSourceMap.set(databaseId, dsId);
     return dsId;
   } catch {
-    // Fallback to databaseId if the retrieve operation is restricted or fails.
+    // metadata retrieval may be restricted; fallback to direct ID usage
     dataSourceMap.set(databaseId, databaseId);
     return databaseId;
   }
@@ -214,6 +220,7 @@ export async function fetchPosts(): Promise<NotionPost[]> {
       filter: { property: "Status", status: { equals: "Published" } },
       sorts:  [{ property: "Date", direction: "descending" }],
     });
+
     return (response.results as unknown[])
       .filter((p: unknown): p is PageObjectResponse => 
         typeof p === "object" && p !== null && "object" in p && p.object === "page" && "properties" in p
