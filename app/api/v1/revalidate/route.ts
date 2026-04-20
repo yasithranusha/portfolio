@@ -11,10 +11,10 @@ export async function POST(request: NextRequest): Promise<Response> {
   const type = request.nextUrl.searchParams.get("type");
 
   if (type === "project") {
-    revalidateTag("projects");
+    revalidateTag("projects", { expire: 0 });
     return NextResponse.json({ revalidated: true, tag: "projects" });
   }
 
-  revalidateTag("posts");
+  revalidateTag("posts", { expire: 0 });
   return NextResponse.json({ revalidated: true, tag: "posts" });
 }
