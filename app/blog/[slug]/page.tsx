@@ -34,13 +34,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       publishedTime: post.date,
       authors:       [siteConfig.name],
       tags:          post.tags,
-      ...(post.cover && { images: [{ url: post.cover, width: 1200, height: 630, alt: post.title }] }),
     },
     twitter: {
       card:        "summary_large_image",
       title:       post.title,
       description: post.excerpt,
-      ...(post.cover && { images: [post.cover] }),
     },
     alternates: {
       canonical: `${siteConfig.url}blog/${slug}`,
