@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
@@ -85,7 +86,7 @@ export default function RootLayout({
         <Sidebar />
         {/* Main canvas: sidebar offset on md+, top navbar offset, bottom footer offset */}
         <main className="md:ml-64 pt-12 pb-10 min-h-screen">{children}</main>
-        <Footer />
+        <Suspense><Footer /></Suspense>
         <Analytics />
         <SpeedInsights />
       </body>

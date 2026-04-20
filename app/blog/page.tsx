@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchPosts } from "@/lib/notion";
+import { Suspense } from "react";
+import { fetchPosts, type NotionPost } from "@/lib/notion";
 import { TagFilter } from "./tag-filter";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
 import { siteConfig } from "@/config/site";
@@ -19,14 +20,45 @@ function formatDate(dateStr: string): string {
     .toUpperCase();
 }
 
+async function DynamicContent({
+  searchParams,
+  posts,
+  allTags,
+}: {
+  searchParams: Promise<{ page?: string; tag?: string; q?: string }>;
+  posts: NotionPost[];
+  allTags: string[];
+}) {
+  const { page = "1", tag, q = "" } = await searchParams;
+  const currentPage = Math.max(1, parseInt(page, 10) || 1);
+
+  const terminalPosts = posts.filter((p) => {
+    const matchesTag = tag ? p.tags.includes(tag) : true;
+    const matchesQuery = q ? p.title.toLowerCase().includes(q.toLowerCase()) : true;
+    return matchesTag && matchesQuery;
+  });
+  const filterCmd = tag ? `grep ${tag}` : q ? `grep ${q}` : null;
+  const initialCommands = filterCmd ? [filterCmd, "ls -la -n 5"] : ["ls -la -n 5"];
+
+  return (
+    <>
+      <InteractiveTerminal
+        title="BLOG_SHELL :: ~/archives"
+        initialCwd="~/archives"
+        initialCommands={initialCommands}
+        posts={terminalPosts}
+        className="mt-8 h-72"
+      />
+      <TagFilter posts={posts} allTags={allTags} page={currentPage} activeTag={tag ?? null} query={q} />
+    </>
+  );
+}
+
 export default async function BlogPage({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string; tag?: string; q?: string }>;
 }) {
-  const { page = "1", tag, q = "" } = await searchParams;
-  const currentPage = Math.max(1, parseInt(page, 10) || 1);
-
   const posts = await fetchPosts();
   const featured = posts.find((p) => p.featured) ?? posts[0];
   const allTags = Array.from(new Set(posts.flatMap((p) => p.tags)));
@@ -68,9 +100,7 @@ export default async function BlogPage({
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 40vw"
                 />
-                {/* Mobile: strong gradient from bottom for text legibility */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/10 lg:bg-gradient-to-l lg:from-surface-container-low lg:via-surface-container-low/40 lg:to-transparent" />
-                {/* Mobile: badge + title overlaid at bottom of image */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 lg:hidden">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="bg-secondary/10 text-secondary px-2 py-0.5 text-[10px] font-bold shrink-0">
@@ -117,30 +147,10 @@ export default async function BlogPage({
         </section>
       )}
 
-      {/* ─── Blog Shell ───────────────────────────────────────────── */}
-      {(() => {
-        const terminalPosts = posts.filter((p) => {
-          const matchesTag = tag ? p.tags.includes(tag) : true;
-          const matchesQuery = q ? p.title.toLowerCase().includes(q.toLowerCase()) : true;
-          return matchesTag && matchesQuery;
-        });
-        const filterCmd = tag ? `grep ${tag}` : q ? `grep ${q}` : null;
-        const initialCommands = filterCmd
-          ? [filterCmd, "ls -la -n 5"]
-          : ["ls -la -n 5"];
-        return (
-          <InteractiveTerminal
-            title="BLOG_SHELL :: ~/archives"
-            initialCwd="~/archives"
-            initialCommands={initialCommands}
-            posts={terminalPosts}
-            className="mt-8 h-72"
-          />
-        );
-      })()}
-
-      {/* ─── Search + Filter + Archive List ──────────────────────── */}
-      <TagFilter posts={posts} allTags={allTags} page={currentPage} activeTag={tag ?? null} query={q} />
+      {/* ─── Dynamic: Terminal + Search + Filter ──────────────────── */}
+      <Suspense>
+        <DynamicContent searchParams={searchParams} posts={posts} allTags={allTags} />
+      </Suspense>
     </div>
   );
 }
