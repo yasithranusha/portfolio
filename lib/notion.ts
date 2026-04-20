@@ -156,7 +156,7 @@ function pageToProject(page: PageObjectResponse): Project {
 
 export async function fetchPosts(): Promise<NotionPost[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
   cacheTag("posts");
 
   if (!process.env.NOTION_BLOG_DB_ID) {
@@ -180,7 +180,7 @@ export async function fetchPosts(): Promise<NotionPost[]> {
 
 export async function fetchPost(slug: string): Promise<(NotionPost & { content: string }) | null> {
   "use cache";
-  cacheLife("minutes");
+  cacheLife("days");
   cacheTag("posts");
 
   if (!process.env.NOTION_BLOG_DB_ID) {
@@ -210,7 +210,7 @@ export async function fetchPost(slug: string): Promise<(NotionPost & { content: 
 
 export async function fetchProjects(): Promise<Project[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
   cacheTag("projects");
 
   if (!process.env.NOTION_PROJECTS_DB_ID) {
