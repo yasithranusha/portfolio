@@ -1,4 +1,4 @@
-import { Client } from "@notionhq/client";
+import { Client, LogLevel } from "@notionhq/client";
 import { NotionToMarkdown } from "notion-to-md";
 import { cacheLife, cacheTag } from "next/cache";
 import type { PageObjectResponse } from "@notionhq/client";
@@ -7,10 +7,48 @@ if (!process.env.NOTION_TOKEN) {
   throw new Error("[notion] NOTION_TOKEN is not set in environment variables");
 }
 
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
+const notion = new Client({ 
+  auth: process.env.NOTION_TOKEN,
+  logLevel: LogLevel.ERROR,
+});
 
 // notion-to-md v3 accepts Client from @notionhq/client — no cast needed
 const n2m = new NotionToMarkdown({ notionClient: notion });
+
+/**
+ * Extended Notion Client interfaces to support the Data Sources API.
+ */
+type NotionClient = Client & {
+  dataSources: {
+    query: (args: {
+      data_source_id: string;
+      filter?:       object;
+      sorts?:        object[];
+      start_cursor?: string;
+      page_size?:    number;
+    }) => Promise<{ results: unknown[] }>;
+  };
+};
+
+/**
+ * ID Resolver Cache
+ * Maps Database IDs to their corresponding Data Source IDs.
+ */
+const dataSourceMap = new Map<string, string>();
+
+async function getDataSourceId(databaseId: string): Promise<string | null> {
+  if (dataSourceMap.has(databaseId)) return dataSourceMap.get(databaseId)!;
+  try {
+    const db = await (notion.databases as unknown as { retrieve: (args: { database_id: string }) => Promise<unknown> }).retrieve({ database_id: databaseId });
+    const dsId = (db as { data_sources?: Array<{ id: string }> }).data_sources?.[0]?.id ?? databaseId;
+    dataSourceMap.set(databaseId, dsId);
+    return dsId;
+  } catch {
+    // Fallback to databaseId if the retrieve operation is restricted or fails.
+    dataSourceMap.set(databaseId, databaseId);
+    return databaseId;
+  }
+}
 
 // ─── Public types ──────────────────────────────────────────────────
 
@@ -43,10 +81,11 @@ export type Project = {
   featured:    boolean;
 };
 
-// ─── Notion property shapes ────────────────────────────────────────
-// Minimal interfaces describing only the fields we actually read.
-// We cast page.properties once per mapper function (as unknown as T)
-// instead of scattering `as any` across every property access.
+// ─── Property Schemas ───────────────────────────────────────────────
+/**
+ * Minimal interfaces for Notion properties. Use these to safely cast
+ * page.properties once per mapper function.
+ */
 
 type RichTextProp    = { rich_text: Array<{ plain_text: string }> };
 type TitleProp       = { title:     Array<{ plain_text: string }> };
@@ -55,7 +94,6 @@ type MultiSelectProp = { multi_select: Array<{ name: string }> };
 type NumberProp      = { number: number | null };
 type CheckboxProp    = { checkbox: boolean };
 type UrlProp         = { url: string | null };
-// Notion "Status" can be either a select or status property type
 type SelectOrStatusProp = {
   select?: { name: string } | null;
   status?: { name: string } | null;
@@ -65,8 +103,8 @@ interface BlogPostProps {
   Slug?:     RichTextProp;
   Title?:    TitleProp;
   Date?:     DateProp;
-  Tag?:      MultiSelectProp; // "Tag" (singular) in this DB schema
   Tags?:     MultiSelectProp;
+  Tag?:      MultiSelectProp;
   Excerpt?:  RichTextProp;
   ReadTime?: NumberProp;      // number column (minutes)
   Featured?: CheckboxProp;
@@ -156,7 +194,7 @@ function pageToProject(page: PageObjectResponse): Project {
   };
 }
 
-// ─── Blog Posts ───────────────────────────────────────────────────
+// ─── Content Retrieval ─────────────────────────────────────────────
 
 export async function fetchPosts(): Promise<NotionPost[]> {
   "use cache";
@@ -168,13 +206,18 @@ export async function fetchPosts(): Promise<NotionPost[]> {
     return [];
   }
   try {
-    const response = await notion.dataSources.query({
-      data_source_id: process.env.NOTION_BLOG_DB_ID,
+    const dataSourceId = await getDataSourceId(process.env.NOTION_BLOG_DB_ID);
+    if (!dataSourceId) return [];
+
+    const response = await (notion as unknown as NotionClient).dataSources.query({
+      data_source_id: dataSourceId,
       filter: { property: "Status", status: { equals: "Published" } },
       sorts:  [{ property: "Date", direction: "descending" }],
     });
-    return response.results
-      .filter((p): p is PageObjectResponse => p.object === "page" && "properties" in p)
+    return (response.results as unknown[])
+      .filter((p: unknown): p is PageObjectResponse => 
+        typeof p === "object" && p !== null && "object" in p && p.object === "page" && "properties" in p
+      )
       .map(pageToPost);
   } catch (err) {
     console.error("[notion] fetchPosts failed:", err);
@@ -192,12 +235,16 @@ export async function fetchPost(slug: string): Promise<(NotionPost & { content: 
     return null;
   }
   try {
-    const response = await notion.dataSources.query({
-      data_source_id: process.env.NOTION_BLOG_DB_ID,
+    const dataSourceId = await getDataSourceId(process.env.NOTION_BLOG_DB_ID);
+    if (!dataSourceId) return null;
+
+    const response = await (notion as unknown as NotionClient).dataSources.query({
+      data_source_id: dataSourceId,
       filter: { property: "Slug", rich_text: { equals: slug } },
     });
-    const page = response.results.find(
-      (p): p is PageObjectResponse => p.object === "page" && "properties" in p
+    const page = (response.results as unknown[]).find(
+      (p: unknown): p is PageObjectResponse => 
+        typeof p === "object" && p !== null && "object" in p && p.object === "page" && "properties" in p
     );
     if (!page) return null;
 
@@ -224,12 +271,16 @@ export async function fetchPostMetadata(slug: string): Promise<NotionPost | null
     return null;
   }
   try {
-    const response = await notion.dataSources.query({
-      data_source_id: process.env.NOTION_BLOG_DB_ID,
+    const dataSourceId = await getDataSourceId(process.env.NOTION_BLOG_DB_ID);
+    if (!dataSourceId) return null;
+
+    const response = await (notion as unknown as NotionClient).dataSources.query({
+      data_source_id: dataSourceId,
       filter: { property: "Slug", rich_text: { equals: slug } },
     });
-    const page = response.results.find(
-      (p): p is PageObjectResponse => p.object === "page" && "properties" in p
+    const page = (response.results as unknown[]).find(
+      (p: unknown): p is PageObjectResponse => 
+        typeof p === "object" && p !== null && "object" in p && p.object === "page" && "properties" in p
     );
     if (!page) return null;
 
@@ -252,13 +303,18 @@ export async function fetchProjects(): Promise<Project[]> {
     return [];
   }
   try {
-    const response = await notion.dataSources.query({
-      data_source_id: process.env.NOTION_PROJECTS_DB_ID,
+    const dataSourceId = await getDataSourceId(process.env.NOTION_PROJECTS_DB_ID);
+    if (!dataSourceId) return [];
+
+    const response = await (notion as unknown as NotionClient).dataSources.query({
+      data_source_id: dataSourceId,
       filter: { property: "Published", checkbox: { equals: true } },
       sorts: [{ property: "Featured", direction: "descending" }],
     });
-    return response.results
-      .filter((p): p is PageObjectResponse => p.object === "page" && "properties" in p)
+    return (response.results as unknown[])
+      .filter((p: unknown): p is PageObjectResponse => 
+        typeof p === "object" && p !== null && "object" in p && p.object === "page" && "properties" in p
+      )
       .map(pageToProject);
   } catch (err) {
     console.error("[notion] fetchProjects failed:", err);
