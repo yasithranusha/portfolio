@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
+import os from "os";
 import { siteConfig } from "./config/site";
+
+const localNetworkIPs = Object.values(os.networkInterfaces())
+  .flat()
+  .filter((n) => n && n.family === "IPv4" && !n.internal)
+  .map((n) => n!.address);
 
 const securityHeaders = [
   { key: "X-Content-Type-Options",   value: "nosniff" },
@@ -14,7 +20,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['motion'],
   },
-  allowedDevOrigins: ['192.168.1.2'],
+  allowedDevOrigins: localNetworkIPs,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.amazonaws.com" },
