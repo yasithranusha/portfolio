@@ -12,6 +12,9 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
 
   useEffect(() => {
     const handleScroll = () => {
+      // Avoid unnecessary calculations on mobile viewports
+      if (window.innerWidth < 1024) return;
+
       const headingElements = Array.from(ref.current?.querySelectorAll("h1, h2, h3") || []);
       if (headingElements.length === 0) return;
 
@@ -145,12 +148,10 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
                 key={`mobile-${heading.id}`}
                 href={`#${heading.id}`}
                 className={cn(
-                  "block text-[11px] font-mono transition-all duration-300 pl-4 border-l -ml-px hover:text-white",
+                  "block text-[11px] font-mono transition-all duration-300 pl-4 border-l -ml-px hover:text-white border-transparent",
                   heading.level === 1 ? "font-bold text-white" : "text-[#7e7e7e]",
                   heading.level === 3 ? "pl-8" : "",
-                  activeId === heading.id 
-                    ? "text-primary border-primary font-bold" 
-                    : "border-transparent text-[#adaaaa]"
+                  "text-[#adaaaa]"
                 )}
                 onClick={(e) => {
                   e.preventDefault();
