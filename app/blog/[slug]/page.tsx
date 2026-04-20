@@ -23,13 +23,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const post = await fetchPost(slug);
   if (!post) return { title: "Not Found" };
+
+  const ogTitle  = post.title.length > 60  ? post.title.slice(0, 57)  + "…" : post.title;
+  const metaDesc = post.excerpt.length > 155 ? post.excerpt.slice(0, 152) + "…" : post.excerpt;
+
   return {
     title:       post.title,
-    description: post.excerpt,
+    description: metaDesc,
     keywords:    post.tags.length > 0 ? post.tags : undefined,
     openGraph: {
-      title:        post.title,
-      description:  post.excerpt,
+      title:        ogTitle,
+      description:  metaDesc,
       type:         "article",
       url:          `${siteConfig.url}blog/${slug}`,
       siteName:     siteConfig.name,
@@ -41,8 +45,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card:        "summary_large_image",
-      title:       post.title,
-      description: post.excerpt,
+      title:       ogTitle,
+      description: metaDesc,
     },
     alternates: {
       canonical: `${siteConfig.url}blog/${slug}`,
