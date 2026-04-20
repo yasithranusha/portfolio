@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { fetchPosts, type NotionPost } from "@/lib/notion";
 import { TagFilter } from "./tag-filter";
 import { InteractiveTerminal } from "@/components/ui/interactive-terminal";
+import { buildInitialHistory } from "@/lib/terminal-exec";
 import { siteConfig } from "@/config/site";
 import { Icon } from "@/components/ui/icon";
 
@@ -39,13 +40,14 @@ async function DynamicContent({
   });
   const filterCmd = tag ? `grep ${tag}` : q ? `grep ${q}` : null;
   const initialCommands = filterCmd ? [filterCmd, "ls -la -n 5"] : ["ls -la -n 5"];
+  const initialHistory = buildInitialHistory(initialCommands, "~/archives", terminalPosts);
 
   return (
     <>
       <InteractiveTerminal
         title="BLOG_SHELL :: ~/archives"
         initialCwd="~/archives"
-        initialCommands={initialCommands}
+        initialHistory={initialHistory}
         posts={terminalPosts}
         className="mt-8 h-72"
       />

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -139,7 +140,9 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* Post content */}
-      <PostRenderer content={post.content} />
+      <Suspense>
+        <PostRenderer content={post.content} />
+      </Suspense>
 
       {/* Footer nav */}
       <div className="mt-16 pt-8 border-t border-outline-variant/20">

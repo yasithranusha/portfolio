@@ -255,6 +255,7 @@ export function InteractiveTerminal({
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               style={{ position: "fixed", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+              maxLength={256}
               spellCheck={false}
               autoComplete="off"
               autoCorrect="off"

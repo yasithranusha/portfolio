@@ -7,21 +7,19 @@ import { cn } from "@/lib/utils";
 export function PostContent({ html, headings }: { html: string; headings: BlogHeading[] }) {
   const ref = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState<string>(headings[0]?.id || "");
-  const initialized = useRef(false);
+  const activeIdRef = useRef(activeId);
+  useEffect(() => { activeIdRef.current = activeId; }, [activeId]);
 
   useEffect(() => {
     const handleScroll = () => {
       const headingElements = Array.from(ref.current?.querySelectorAll("h1, h2, h3") || []);
       if (headingElements.length === 0) return;
 
-      // Find the heading that is closest to the top of the viewport but still below it
-      // or the last one that passed the top
-      let currentActiveId = activeId;
-      const scrollThreshold = 120; // Distance from top to trigger highlight
+      let currentActiveId = activeIdRef.current;
+      const scrollThreshold = 120;
 
-      // Check if we are at the bottom of the page
       const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
-      
+
       if (isAtBottom && headingElements.length > 0) {
         currentActiveId = headingElements[headingElements.length - 1].id;
       } else {
@@ -35,12 +33,11 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
         }
       }
 
-      if (currentActiveId !== activeId) {
+      if (currentActiveId !== activeIdRef.current) {
         setActiveId(currentActiveId);
       }
     };
 
-    // Throttle scroll events for performance
     let timeoutId: NodeJS.Timeout | null = null;
     const throttledScroll = () => {
       if (!timeoutId) {
@@ -52,14 +49,13 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
     };
 
     window.addEventListener("scroll", throttledScroll, { passive: true });
-    // Initial check
     handleScroll();
 
     return () => {
       window.removeEventListener("scroll", throttledScroll);
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [activeId]); // Re-run when activeId changes to keep listener up to date
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!ref.current) return;
