@@ -15,15 +15,17 @@ const n2m = new NotionToMarkdown({ notionClient: notion });
 // ─── Public types ──────────────────────────────────────────────────
 
 export type NotionPost = {
-  id:       string;
-  slug:     string;
-  title:    string;
-  date:     string;
-  tags:     string[];
-  excerpt:  string;
-  readTime: string;
-  featured: boolean;
-  cover:    string;
+  id:           string;
+  slug:         string;
+  title:        string;
+  date:         string;
+  lastEditedAt: string;
+  tags:         string[];
+  excerpt:      string;
+  readTime:     string;
+  readTimeMin:  number;
+  featured:     boolean;
+  cover:        string;
 };
 
 export type GitHubRepo = { label: string; url: string };
@@ -94,19 +96,21 @@ function getCoverUrl(page: PageObjectResponse): string {
 
 function pageToPost(page: PageObjectResponse): NotionPost {
   const props = page.properties as unknown as BlogPostProps;
-  const readTimeNum = props.ReadTime?.number;
+  const readTimeNum = props.ReadTime?.number ?? 3;
   return {
-    id:       page.id,
-    slug:     props.Slug?.rich_text[0]?.plain_text  ?? page.id,
-    title:    props.Title?.title[0]?.plain_text     ?? "Untitled",
-    date:     props.Date?.date?.start               ?? "",
-    tags:     props.Tag?.multi_select.map((t) => t.name)
-           ?? props.Tags?.multi_select.map((t) => t.name)
-           ?? [],
-    excerpt:  props.Excerpt?.rich_text[0]?.plain_text ?? "",
-    readTime: readTimeNum != null ? `~${readTimeNum}m` : "~3m",
-    featured: props.Featured?.checkbox              ?? false,
-    cover:    getCoverUrl(page),
+    id:           page.id,
+    slug:         props.Slug?.rich_text[0]?.plain_text  ?? page.id,
+    title:        props.Title?.title[0]?.plain_text     ?? "Untitled",
+    date:         props.Date?.date?.start               ?? "",
+    lastEditedAt: page.last_edited_time,
+    tags:         props.Tag?.multi_select.map((t) => t.name)
+               ?? props.Tags?.multi_select.map((t) => t.name)
+               ?? [],
+    excerpt:      props.Excerpt?.rich_text[0]?.plain_text ?? "",
+    readTime:     `~${readTimeNum}m`,
+    readTimeMin:  readTimeNum,
+    featured:     props.Featured?.checkbox              ?? false,
+    cover:        getCoverUrl(page),
   };
 }
 

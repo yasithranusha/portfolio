@@ -26,14 +26,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title:       post.title,
     description: post.excerpt,
+    keywords:    post.tags.length > 0 ? post.tags : undefined,
     openGraph: {
-      title:         post.title,
-      description:   post.excerpt,
-      type:          "article",
-      url:           `${siteConfig.url}blog/${slug}`,
+      title:        post.title,
+      description:  post.excerpt,
+      type:         "article",
+      url:          `${siteConfig.url}blog/${slug}`,
+      siteName:     siteConfig.name,
+      locale:       "en_US",
       publishedTime: post.date,
-      authors:       [siteConfig.name],
-      tags:          post.tags,
+      modifiedTime:  post.lastEditedAt,
+      authors:      [siteConfig.name],
+      tags:         post.tags,
     },
     twitter: {
       card:        "summary_large_image",
@@ -60,17 +64,23 @@ export default async function BlogPostPage({ params }: PageProps) {
       })
     : "";
 
+  const wordCount = post.content.split(/\s+/).filter(Boolean).length;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type":    "Article",
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${siteConfig.url}blog/${slug}` },
     headline:        post.title,
     description:     post.excerpt,
+    image:           `${siteConfig.url}blog/${slug}/opengraph-image`,
     datePublished:   post.date,
-    author: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+    dateModified:    post.lastEditedAt,
+    wordCount,
+    timeRequired:    `PT${post.readTimeMin}M`,
+    keywords:        post.tags.join(", "),
+    author:    { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
     publisher: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
     url: `${siteConfig.url}blog/${slug}`,
-    ...(post.cover && { image: post.cover }),
-    keywords: post.tags.join(", "),
   };
 
   return (
