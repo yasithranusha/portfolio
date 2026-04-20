@@ -210,6 +210,36 @@ export async function fetchPost(slug: string): Promise<(NotionPost & { content: 
   }
 }
 
+/**
+ * Lightweight version of fetchPost for metadata purposes (like OG images).
+ * Skips expensive markdown conversion.
+ */
+export async function fetchPostMetadata(slug: string): Promise<NotionPost | null> {
+  "use cache";
+  cacheLife("days");
+  cacheTag("posts");
+
+  if (!process.env.NOTION_BLOG_DB_ID) {
+    console.error("[notion] NOTION_BLOG_DB_ID is not set");
+    return null;
+  }
+  try {
+    const response = await notion.dataSources.query({
+      data_source_id: process.env.NOTION_BLOG_DB_ID,
+      filter: { property: "Slug", rich_text: { equals: slug } },
+    });
+    const page = response.results.find(
+      (p): p is PageObjectResponse => p.object === "page" && "properties" in p
+    );
+    if (!page) return null;
+
+    return pageToPost(page);
+  } catch (err) {
+    console.error("[notion] fetchPostMetadata failed for slug '%s':", slug, err);
+    return null;
+  }
+}
+
 // ─── Projects ─────────────────────────────────────────────────────
 
 export async function fetchProjects(): Promise<Project[]> {
