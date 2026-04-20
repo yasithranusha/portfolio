@@ -93,8 +93,8 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
   }, [html]);
 
   return (
-    <div className="relative flex flex-col md:flex-row gap-12 mt-8">
-      {/* Table of Contents - Desktop Only */}
+    <div className="relative flex flex-col lg:flex-row gap-12 mt-8">
+      {/* Table of Contents - Desktop Only (Sticky Sidebar) */}
       <aside className="hidden lg:block w-64 shrink-0">
         <div className="sticky top-24">
           <div className="text-[10px] font-mono text-primary/70 mb-4 tracking-widest flex items-center gap-2">
@@ -127,11 +127,45 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
         </div>
       </aside>
 
-      <article
-        ref={ref}
-        className="font-mono text-sm max-w-none flex-1 [&_pre]:my-6 [&_pre]:overflow-x-auto [&_pre]:p-4 [&_pre]:border [&_pre]:border-[#494847]/30 [&_pre]:bg-[#0e0e0e]"
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <div className="flex-1 min-w-0">
+        {/* Mobile Table of Contents (Top of Page) */}
+        <div className="block lg:hidden w-full mb-10 border border-outline-variant/20 rounded-sm bg-surface-container-low/20 overflow-hidden">
+          <div className="bg-surface-container px-3 py-1.5 border-b border-outline-variant/20 flex items-center justify-between">
+            <div className="text-[9px] font-mono text-primary flex items-center gap-2 uppercase tracking-tighter">
+              <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+              JUMP_LIST.LOG
+            </div>
+            <div className="text-[9px] font-mono text-outline lowercase opacity-50">
+              {headings.length} sections found
+            </div>
+          </div>
+          <nav className="p-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+            {headings.map((heading) => (
+              <a
+                key={`mobile-${heading.id}`}
+                href={`#${heading.id}`}
+                className={cn(
+                  "text-[11px] font-mono transition-colors hover:text-primary flex items-start gap-2 group",
+                  heading.level === 1 ? "text-white font-bold" : "text-[#7e7e7e]"
+                )}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(heading.id)?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                <span className="text-primary/40 group-hover:text-primary transition-colors">→</span>
+                <span className="truncate">{heading.text}</span>
+              </a>
+            ))}
+          </nav>
+        </div>
+
+        <article
+          ref={ref}
+          className="font-mono text-sm max-w-none [&_pre]:my-6 [&_pre]:overflow-x-auto [&_pre]:p-4 [&_pre]:border [&_pre]:border-[#494847]/30 [&_pre]:bg-[#0e0e0e]"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      </div>
     </div>
   );
 }
