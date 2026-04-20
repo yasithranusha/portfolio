@@ -38,7 +38,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     }
   }
 
-  const shortExcerpt = excerpt.length > 120 ? excerpt.slice(0, 117) + "…" : excerpt;
+  // Excerpt is now managed manually in Notion for optimal length
 
   return new ImageResponse(
     (
@@ -172,7 +172,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           </div>
 
           {/* Excerpt */}
-          {shortExcerpt && (
+          {excerpt && (
             <div
               style={{
                 color: "rgba(173, 170, 170, 0.7)",
@@ -182,7 +182,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
                 fontFamily: "sans-serif", // Slight contrast for readability
               }}
             >
-              {shortExcerpt}
+              {excerpt}
             </div>
           )}
 
