@@ -1,4 +1,5 @@
 import { createHighlighter, type Highlighter } from "shiki";
+import { cacheLife } from "next/cache";
 
 let highlighter: Highlighter | null = null;
 
@@ -6,7 +7,7 @@ export async function getHighlighter(): Promise<Highlighter> {
   if (highlighter) return highlighter;
 
   highlighter = await createHighlighter({
-    themes: ["github-dark-dimmed"],
+    themes: ["tokyo-night"],
     langs: [
       "typescript",
       "javascript",
@@ -40,10 +41,12 @@ const SUPPORTED = new Set([
 ]);
 
 export async function highlight(code: string, lang: string): Promise<string> {
+  "use cache";
+  cacheLife("hours");
   const h = await getHighlighter();
   const safeLang = SUPPORTED.has(lang) ? lang : "text";
   return h.codeToHtml(code, {
     lang: safeLang,
-    theme: "github-dark-dimmed",
+    theme: "tokyo-night",
   });
 }

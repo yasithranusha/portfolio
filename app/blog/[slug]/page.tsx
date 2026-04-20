@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fetchPost, fetchPosts } from "@/lib/notion";
 import { PostRenderer } from "@/components/blog/post-renderer";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Tag } from "@/components/ui/tag";
+import { ReadingProgress } from "@/components/blog/reading-progress";
 import { siteConfig } from "@/config/site";
 
 interface PageProps {
@@ -73,19 +76,24 @@ export default async function BlogPostPage({ params }: PageProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+      <ReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Breadcrumb */}
-      <div className="mb-8">
+      <div className="mb-8 flex items-center justify-between group">
         <Link
           href="/blog"
-          className="text-[10px] font-mono text-[#adaaaa] hover:text-[#5db4fe] transition-colors tracking-widest"
+          className="text-[10px] font-mono text-[#adaaaa] hover:text-[#5db4fe] transition-colors tracking-widest flex items-center gap-2"
         >
-          ← /archives
+          <span className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">{"$ "}</span>
+          cd ../archives
         </Link>
+        <div className="text-[9px] font-mono text-outline opacity-50 hidden sm:block">
+          {slug.toUpperCase()}
+        </div>
       </div>
 
       {/* Post header */}
@@ -94,9 +102,11 @@ export default async function BlogPostPage({ params }: PageProps) {
         <h1 className="text-2xl sm:text-3xl font-bold font-sans text-white leading-tight">
           {post.title}
         </h1>
-        <div className="flex flex-wrap items-center gap-4 text-[10px] font-mono text-outline">
-          <span>{date}</span>
-          <span>[{post.readTime}]</span>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4 text-[10px] font-mono text-outline">
+            <span>{date}</span>
+            <span>[{post.readTime}]</span>
+          </div>
         </div>
         {post.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
@@ -112,8 +122,27 @@ export default async function BlogPostPage({ params }: PageProps) {
         )}
       </header>
 
+      {/* Cover Image */}
+      {post.cover && (
+        <div className="relative aspect-[3/1] mb-12 rounded-lg overflow-hidden border border-outline-variant/30 group">
+          <Image
+            src={post.cover}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/10 mix-blend-overlay pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
+          {/* Scanline effect on image only */}
+          <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+        </div>
+      )}
+
       {/* Post content */}
-      <PostRenderer content={post.content} />
+      <Suspense>
+        <PostRenderer content={post.content} />
+      </Suspense>
 
       {/* Footer nav */}
       <div className="mt-16 pt-8 border-t border-outline-variant/20">

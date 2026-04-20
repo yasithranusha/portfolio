@@ -126,6 +126,10 @@ const HELP_LINES: TerminalLine[] = [
 
 // ─── Pure helpers ─────────────────────────────────────────────────────
 
+function escHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 export function makePrompt(dir: string): string {
   return `root@kernel:${dir}$`;
 }
@@ -149,7 +153,7 @@ export function exec(
 
   if (!trimmed)                              return { output: [],          nextCwd };
   if (trimmed === "clear")                   return { output: "__CLEAR__", nextCwd };
-  if (trimmed === "help" || trimmed === "?") return { output: HELP_LINES,  nextCwd };
+  if (trimmed === "help" || trimmed === "?" || trimmed === "--help" || trimmed === "-h") return { output: HELP_LINES, nextCwd };
 
   const spaceIdx = trimmed.indexOf(" ");
   const cmd  = spaceIdx === -1 ? trimmed : trimmed.slice(0, spaceIdx);
@@ -203,7 +207,7 @@ export function exec(
           { text: `total ${displayed.length}${limit ? ` (showing ${displayed.length} of ${posts.length})` : ""}`, color: "text-on-surface-variant" },
           ...displayed.map((p) => ({
             html: true,
-            text: `<a href="/blog/${p.slug}" class="block hover:bg-white/5 -mx-4 px-4"><span class="text-on-surface">-rwxr-xr-x  1 root  staff  ${p.readTime.replace("~", "").trim().padEnd(5)}  ${fmtDate(p.date)}  </span><span class="text-primary">` + p.slug + `.md</span></a>`,
+            text: `<a href="/blog/${escHtml(p.slug)}" class="block hover:bg-white/5 -mx-4 px-4"><span class="text-on-surface">-rwxr-xr-x  1 root  staff  ${escHtml(p.readTime.replace("~", "").trim().padEnd(5))}  ${fmtDate(p.date)}  </span><span class="text-primary">${escHtml(p.slug)}.md</span></a>`,
           })),
         ],
         nextCwd,
@@ -212,7 +216,7 @@ export function exec(
     return {
       output: displayed.map((p) => ({
         html: true,
-        text: `<a href="/blog/${p.slug}" class="text-secondary block hover:bg-white/5 -mx-4 px-4">` + p.slug + `.md</a>`,
+        text: `<a href="/blog/${escHtml(p.slug)}" class="text-secondary block hover:bg-white/5 -mx-4 px-4">${escHtml(p.slug)}.md</a>`,
       })),
       nextCwd,
     };
@@ -287,7 +291,7 @@ export function getCompletions(input: string, cwd: string, posts: NotionPost[]):
   const spaceIdx = trimmed.indexOf(" ");
 
   if (spaceIdx === -1) {
-    const COMMANDS = ["ls", "cd", "cat", "curl", "clear", "grep", "help", "pwd", "whoami", `./${siteConfig.terminal.scriptName}`];
+    const COMMANDS = ["ls", "cd", "cat", "curl", "clear", "grep", "--help", "pwd", "whoami", `./${siteConfig.terminal.scriptName}`];
     return COMMANDS.filter((c) => c.startsWith(trimmed) && c !== trimmed);
   }
 

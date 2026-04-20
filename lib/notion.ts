@@ -1,6 +1,6 @@
 import { Client } from "@notionhq/client";
 import { NotionToMarkdown } from "notion-to-md";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import type { PageObjectResponse } from "@notionhq/client";
 
 if (!process.env.NOTION_TOKEN) {
@@ -154,80 +154,80 @@ function pageToProject(page: PageObjectResponse): Project {
 
 // ─── Blog Posts ───────────────────────────────────────────────────
 
-export const fetchPosts = unstable_cache(
-  async (): Promise<NotionPost[]> => {
-    if (!process.env.NOTION_BLOG_DB_ID) {
-      console.error("[notion] NOTION_BLOG_DB_ID is not set");
-      return [];
-    }
-    try {
-      const response = await notion.dataSources.query({
-        data_source_id: process.env.NOTION_BLOG_DB_ID,
-        filter: { property: "Status", status: { equals: "Published" } },
-        sorts:  [{ property: "Date", direction: "descending" }],
-      });
-      return response.results
-        .filter((p): p is PageObjectResponse => p.object === "page" && "properties" in p)
-        .map(pageToPost);
-    } catch (err) {
-      console.error("[notion] fetchPosts failed:", err);
-      return [];
-    }
-  },
-  ["notion-posts"],
-  { revalidate: 3600, tags: ["posts"] }
-);
+export async function fetchPosts(): Promise<NotionPost[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("posts");
 
-export const fetchPost = unstable_cache(
-  async (slug: string): Promise<(NotionPost & { content: string }) | null> => {
-    if (!process.env.NOTION_BLOG_DB_ID) {
-      console.error("[notion] NOTION_BLOG_DB_ID is not set");
-      return null;
-    }
-    try {
-      const response = await notion.dataSources.query({
-        data_source_id: process.env.NOTION_BLOG_DB_ID,
-        filter: { property: "Slug", rich_text: { equals: slug } },
-      });
-      const page = response.results.find(
-        (p): p is PageObjectResponse => p.object === "page" && "properties" in p
-      );
-      if (!page) return null;
+  if (!process.env.NOTION_BLOG_DB_ID) {
+    console.error("[notion] NOTION_BLOG_DB_ID is not set");
+    return [];
+  }
+  try {
+    const response = await notion.dataSources.query({
+      data_source_id: process.env.NOTION_BLOG_DB_ID,
+      filter: { property: "Status", status: { equals: "Published" } },
+      sorts:  [{ property: "Date", direction: "descending" }],
+    });
+    return response.results
+      .filter((p): p is PageObjectResponse => p.object === "page" && "properties" in p)
+      .map(pageToPost);
+  } catch (err) {
+    console.error("[notion] fetchPosts failed:", err);
+    return [];
+  }
+}
 
-      const mdBlocks = await n2m.pageToMarkdown(page.id);
-      const content  = n2m.toMarkdownString(mdBlocks).parent ?? "";
-      return { ...pageToPost(page), slug, content };
-    } catch (err) {
-      console.error("[notion] fetchPost failed for slug '%s':", slug, err);
-      return null;
-    }
-  },
-  ["notion-post"],
-  { revalidate: 3600, tags: ["posts"] }
-);
+export async function fetchPost(slug: string): Promise<(NotionPost & { content: string }) | null> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("posts");
+
+  if (!process.env.NOTION_BLOG_DB_ID) {
+    console.error("[notion] NOTION_BLOG_DB_ID is not set");
+    return null;
+  }
+  try {
+    const response = await notion.dataSources.query({
+      data_source_id: process.env.NOTION_BLOG_DB_ID,
+      filter: { property: "Slug", rich_text: { equals: slug } },
+    });
+    const page = response.results.find(
+      (p): p is PageObjectResponse => p.object === "page" && "properties" in p
+    );
+    if (!page) return null;
+
+    const mdBlocks = await n2m.pageToMarkdown(page.id);
+    const content  = n2m.toMarkdownString(mdBlocks).parent ?? "";
+    return { ...pageToPost(page), slug, content };
+  } catch (err) {
+    console.error("[notion] fetchPost failed for slug '%s':", slug, err);
+    return null;
+  }
+}
 
 // ─── Projects ─────────────────────────────────────────────────────
 
-export const fetchProjects = unstable_cache(
-  async (): Promise<Project[]> => {
-    if (!process.env.NOTION_PROJECTS_DB_ID) {
-      console.error("[notion] NOTION_PROJECTS_DB_ID is not set");
-      return [];
-    }
-    try {
-      const response = await notion.dataSources.query({
-        data_source_id: process.env.NOTION_PROJECTS_DB_ID,
-        filter: { property: "Published", checkbox: { equals: true } },
-        sorts: [{ property: "Featured", direction: "descending" }],
-      });
-      return response.results
-        .filter((p): p is PageObjectResponse => p.object === "page" && "properties" in p)
-        .map(pageToProject);
-    } catch (err) {
-      console.error("[notion] fetchProjects failed:", err);
-      return [];
-    }
-  },
-  ["notion-projects"],
-  { revalidate: 3600, tags: ["projects"] }
-);
+export async function fetchProjects(): Promise<Project[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("projects");
+
+  if (!process.env.NOTION_PROJECTS_DB_ID) {
+    console.error("[notion] NOTION_PROJECTS_DB_ID is not set");
+    return [];
+  }
+  try {
+    const response = await notion.dataSources.query({
+      data_source_id: process.env.NOTION_PROJECTS_DB_ID,
+      filter: { property: "Published", checkbox: { equals: true } },
+      sorts: [{ property: "Featured", direction: "descending" }],
+    });
+    return response.results
+      .filter((p): p is PageObjectResponse => p.object === "page" && "properties" in p)
+      .map(pageToProject);
+  } catch (err) {
+    console.error("[notion] fetchProjects failed:", err);
+    return [];
+  }
+}
