@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { fetchPost, fetchPosts } from "@/lib/notion";
+import { fetchPostMetadata, fetchPosts } from "@/lib/notion";
 import { siteConfig } from "@/config/site";
 
 export const revalidate = 86400;
@@ -13,7 +13,8 @@ export async function generateStaticParams() {
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await fetchPost(slug);
+  // Use metadata-only fetch to avoid 500 timeouts/memory errors
+  const post = await fetchPostMetadata(slug);
 
   const title   = post?.title   ?? "Blog Post";
   const excerpt = post?.excerpt ?? "";
@@ -21,13 +22,20 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   let coverDataUri: string | null = null;
   if (post?.cover) {
     try {
-      const res = await fetch(post.cover);
+      const res = await fetch(post.cover, { signal: AbortSignal.timeout(4000) });
+
       if (res.ok) {
         const buf  = await res.arrayBuffer();
         const mime = res.headers.get("content-type") ?? "image/jpeg";
-        coverDataUri = `data:${mime};base64,${Buffer.from(buf).toString("base64")}`;
+        // Use standard Buffer if available, or fallback to btoa for edge safety
+        const base64 = typeof Buffer !== "undefined" 
+          ? Buffer.from(buf).toString("base64")
+          : btoa(String.fromCharCode(...new Uint8Array(buf)));
+        coverDataUri = `data:${mime};base64,${base64}`;
       }
-    } catch { /* render without cover */ }
+    } catch (e) {
+      console.warn("[opengraph-image] Failed to fetch cover:", e);
+    }
   }
 
   const shortExcerpt = excerpt.length > 120 ? excerpt.slice(0, 117) + "…" : excerpt;
@@ -39,41 +47,39 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           width: "100%",
           height: "100%",
           display: "flex",
-          backgroundColor: "#0a0a0a",
+          backgroundColor: "#0e0e0e",
           position: "relative",
           overflow: "hidden",
           fontFamily: "monospace",
         }}
       >
-        {/* Subtle grid */}
+        {/* 1. Subtle grid matching globals.css */}
         <div
           style={{
             position: "absolute",
             inset: 0,
+            display: "flex",
             backgroundImage:
-              "linear-gradient(rgba(85,254,126,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(85,254,126,0.03) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+              "linear-gradient(rgba(85,254,126,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(85,254,126,0.02) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
           }}
         />
 
-        {/* Green glow — top left */}
+        {/* 2. Accent Glow — bottom right */}
         <div
           style={{
             position: "absolute",
-            top: "-80px",
-            left: "-80px",
-            width: "400px",
-            height: "400px",
+            bottom: "-150px",
+            right: "-150px",
+            width: "500px",
+            height: "500px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(85,254,126,0.08) 0%, transparent 70%)",
+            display: "flex",
+            background: "radial-gradient(circle, rgba(85,254,126,0.06) 0%, transparent 70%)",
           }}
         />
 
-        {/* Decorative diagonal streaks — top right */}
-        <div style={{ position: "absolute", top: "55px", right: "180px", width: "260px", height: "2px", background: "rgba(85,254,126,0.35)", transform: "rotate(-12deg)", borderRadius: "2px" }} />
-        <div style={{ position: "absolute", top: "72px", right: "175px", width: "160px", height: "1px", background: "rgba(85,254,126,0.15)", transform: "rotate(-12deg)", borderRadius: "2px" }} />
-
-        {/* Left — cover image */}
+        {/* 3. Left — cover image container */}
         <div
           style={{
             display: "flex",
@@ -81,109 +87,166 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             justifyContent: "center",
             width: "48%",
             height: "100%",
+            paddingTop: "44px", // Top bar offset
             position: "relative",
           }}
         >
           {coverDataUri ? (
-            <>
-              {/* Glow card behind image */}
-              <div
-                style={{
-                  position: "absolute",
-                  width: "400px",
-                  height: "295px",
-                  border: "1px solid rgba(85,254,126,0.15)",
-                  borderRadius: "12px",
-                  background: "rgba(85,254,126,0.04)",
-                  transform: "translate(12px, 14px)",
-                }}
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+            <div style={{ display: "flex", padding: "12px", border: "1px solid rgba(85,254,126,0.1)", borderRadius: "12px", background: "rgba(85,254,126,0.03)", position: "relative" }}>
               <img
                 src={coverDataUri}
                 alt=""
                 style={{
-                  width: "400px",
+                  width: "420px",
                   height: "280px",
                   objectFit: "cover",
-                  borderRadius: "8px",
+                  borderRadius: "6px",
                   border: "1px solid rgba(85,254,126,0.2)",
-                  position: "relative",
                 }}
               />
-            </>
+            </div>
           ) : (
             <div
               style={{
-                width: "400px",
+                width: "420px",
                 height: "280px",
-                border: "1px solid rgba(85,254,126,0.2)",
+                border: "1px solid rgba(85,254,126,0.1)",
                 borderRadius: "8px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "rgba(85,254,126,0.3)",
-                fontSize: "16px",
-                letterSpacing: "0.15em",
+                color: "rgba(85,254,126,0.2)",
+                fontSize: "14px",
+                letterSpacing: "0.4em",
+                background: "rgba(85,254,126,0.02)",
               }}
             >
-              {siteConfig.domain}
+              NO_COVER_IMG
             </div>
           )}
         </div>
 
-        {/* Right — text */}
+        {/* 4. Right — Content area */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             width: "52%",
-            padding: "60px 64px 60px 16px",
-            gap: "20px",
+            padding: "80px 64px 40px 0px",
+            gap: "24px",
             position: "relative",
           }}
         >
-          {/* Top label */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-            <div style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#55fe7e", boxShadow: "0 0 6px #55fe7e" }} />
-            <div style={{ color: "#55fe7e", fontSize: "12px", letterSpacing: "0.18em" }}>
-              {siteConfig.domain} / blog
+          {/* Shell Prompt */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+            <div style={{ color: "#55fe7e", fontSize: "14px", fontWeight: "bold", display: "flex" }}>
+              yasith@kernel:~/blog$
+            </div>
+            <div style={{ color: "#ffffff", fontSize: "14px", opacity: 0.8, display: "flex" }}>
+              cat metadata.json
             </div>
           </div>
 
-          {/* Title */}
+          {/* Title with Terminal Glow */}
           <div
             style={{
-              color: "#f0f0f0",
-              fontSize: title.length > 50 ? "36px" : "42px",
-              fontWeight: 700,
-              lineHeight: 1.25,
-              letterSpacing: "-0.01em",
+              color: "#ffffff",
+              fontSize: title.length > 45 ? "42px" : "48px",
+              fontWeight: 800,
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+              display: "flex",
+              textShadow: "0 0 20px rgba(85,254,126,0.15)",
             }}
           >
             {title}
           </div>
 
-          {/* Divider */}
-          <div style={{ width: "48px", height: "2px", backgroundColor: "#55fe7e", opacity: 0.6 }} />
+          {/* Decorative Divider */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ width: "40px", height: "2px", backgroundColor: "#55fe7e", display: "flex" }} />
+            <div style={{ color: "rgba(85,254,126,0.4)", fontSize: "10px", letterSpacing: "0.2em", fontWeight: "bold", display: "flex" }}>
+              SYSTEM_STATUS: OK
+            </div>
+          </div>
 
           {/* Excerpt */}
           {shortExcerpt && (
             <div
               style={{
-                color: "rgba(240,240,240,0.55)",
-                fontSize: "17px",
-                lineHeight: 1.65,
+                color: "rgba(173, 170, 170, 0.7)",
+                fontSize: "18px",
+                lineHeight: 1.6,
+                display: "flex",
+                fontFamily: "sans-serif", // Slight contrast for readability
               }}
             >
               {shortExcerpt}
             </div>
           )}
 
-          {/* Author */}
-          <div style={{ color: "rgba(85,254,126,0.45)", fontSize: "13px", letterSpacing: "0.08em", marginTop: "4px" }}>
-            {siteConfig.name}
+          {/* Footer branding */}
+          <div style={{ 
+            marginTop: "auto", 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "space-between",
+            borderTop: "1px solid rgba(85,254,126,0.05)",
+            paddingTop: "20px"
+          }}>
+            <div style={{ color: "#55fe7e", fontSize: "11px", letterSpacing: "0.15em", opacity: 0.6, display: "flex" }}>
+              AUTHOR: {siteConfig.name.toUpperCase()}
+            </div>
+            <div style={{ color: "rgba(173, 170, 170, 0.3)", fontSize: "10px", display: "flex" }}>
+               v2.0.4-boot
+            </div>
+          </div>
+        </div>
+
+        {/* 5. Global Scanlines effect — moved to layer naturally */}
+        <div 
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            backgroundImage: "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%)",
+            backgroundSize: "100% 4px",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* 6. Terminal Header — moved last to be on top of everything naturally */}
+        <div 
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "44px",
+            backgroundColor: "#181818",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 24px",
+            borderBottom: "1px solid rgba(85,254,126,0.1)",
+          }}
+        >
+          <div style={{ display: "flex", gap: "8px" }}>
+            <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#ff5f56", display: "flex" }} />
+            <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#ffbd2e", display: "flex" }} />
+            <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#27c93f", display: "flex" }} />
+          </div>
+          <div style={{ 
+            flex: 1, 
+            display: "flex", 
+            justifyContent: "center",
+            color: "rgba(173, 170, 170, 0.4)", 
+            fontSize: "10px", 
+            letterSpacing: "0.3em", 
+            fontWeight: "bold",
+            textTransform: "uppercase" 
+          }}>
+            Kernel_Console / Blog_Entry
           </div>
         </div>
       </div>
