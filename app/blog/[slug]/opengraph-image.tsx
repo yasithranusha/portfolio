@@ -22,7 +22,10 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   let coverDataUri: string | null = null;
   if (post?.cover) {
     try {
-      const res = await fetch(post.cover, { signal: AbortSignal.timeout(4000) });
+      const isStatic = process.env.NEXT_PHASE === "phase-production-build";
+      const res = await fetch(post.cover, { 
+        signal: isStatic ? undefined : AbortSignal.timeout(4000) 
+      });
 
       if (res.ok) {
         const buf  = await res.arrayBuffer();
@@ -33,8 +36,10 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           : btoa(String.fromCharCode(...new Uint8Array(buf)));
         coverDataUri = `data:${mime};base64,${base64}`;
       }
-    } catch (e) {
-      console.warn("[opengraph-image] Failed to fetch cover:", e);
+    } catch (e: unknown) {
+      if (process.env.NEXT_PHASE !== "phase-production-build") {
+        console.warn("[opengraph-image] Failed to fetch cover:", e);
+      }
     }
   }
 
