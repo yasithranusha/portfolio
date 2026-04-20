@@ -56,13 +56,13 @@ function rehypeTailwind() {
 
       switch (tagName) {
         case "h1":
-          classes.push("text-2xl", "font-extrabold", "font-sans", "text-white", "mt-16", "mb-8");
+          classes.push("text-2xl", "font-extrabold", "font-sans", "text-white", "mt-16", "mb-8", "scroll-mt-24");
           break;
         case "h2":
-          classes.push("text-xl", "font-bold", "font-sans", "text-white", "mt-12", "mb-6", "border-b", "border-outline-variant/10", "pb-2");
+          classes.push("text-xl", "font-bold", "font-sans", "text-white", "mt-12", "mb-6", "border-b", "border-outline-variant/10", "pb-2", "scroll-mt-24");
           break;
         case "h3":
-          classes.push("text-lg", "font-semibold", "font-sans", "text-white", "mt-10", "mb-4");
+          classes.push("text-lg", "font-semibold", "font-sans", "text-white", "mt-10", "mb-4", "scroll-mt-24");
           break;
         case "p":
           classes.push("text-[#adaaaa]", "leading-7", "my-5");
@@ -177,10 +177,17 @@ async function renderContent(markdown: string | undefined | null): Promise<{ htm
     .use(rehypeStringify, { allowDangerousHtml: true });
 
   const result = await processor.process(markdown);
-  return { 
-    html: result.toString(),
-    headings
-  };
+
+  // Inject copy buttons server-side so the client never touches the DOM to create elements.
+  // Shiki outputs raw HTML strings that rehype plugins can't visit, so we post-process here.
+  const COPY_BTN =
+    '<button class="copy-btn absolute top-2 right-2 text-[10px] font-mono border border-[#494847]/60 px-2 py-1 text-[#adaaaa] hover:text-primary hover:border-primary/40 transition-colors bg-[#0e0e0e] cursor-pointer opacity-0 group-hover:opacity-100">COPY</button>';
+
+  const html = result.toString()
+    .replace(/(<pre\b)/g, '<div class="relative group">$1')
+    .replace(/<\/pre>/g, `</pre>${COPY_BTN}</div>`);
+
+  return { html, headings };
 }
 
 export async function PostRenderer({ content }: PostRendererProps) {

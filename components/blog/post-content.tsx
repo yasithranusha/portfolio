@@ -4,6 +4,40 @@ import { useEffect, useRef, useState } from "react";
 import type { BlogHeading } from "./post-renderer";
 import { cn } from "@/lib/utils";
 
+function TocLink({
+  heading,
+  activeId,
+  mobile = false,
+}: {
+  heading: BlogHeading;
+  activeId?: string;
+  mobile?: boolean;
+}) {
+  const isActive = !mobile && activeId === heading.id;
+  const indent = (mobile ? ["pl-0", "pl-4", "pl-8"] : ["pl-4", "pl-8", "pl-12"])[heading.level - 1] ?? "pl-4";
+
+  return (
+    <a
+      href={`#${heading.id}`}
+      className={cn(
+        "block text-[11px] font-mono transition-all duration-300 hover:text-white border-l",
+        indent,
+        heading.level === 1 ? "font-bold" : "text-[#7e7e7e]",
+        mobile
+          ? "border-transparent hover:border-primary/30 text-[#adaaaa]"
+          : ["-ml-px", isActive ? "text-primary border-primary font-bold" : "border-transparent text-[#adaaaa]"],
+      )}
+      onClick={(e) => {
+        e.preventDefault();
+        document.getElementById(heading.id)?.scrollIntoView({ behavior: "smooth" });
+      }}
+    >
+      {heading.level === 1 ? "> " : ""}
+      {heading.text}
+    </a>
+  );
+}
+
 export function PostContent({ html, headings }: { html: string; headings: BlogHeading[] }) {
   const ref = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState<string>(headings[0]?.id || "");
@@ -61,39 +95,28 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!ref.current) return;
-    ref.current.querySelectorAll("pre").forEach((pre) => {
-      if (pre.querySelector(".copy-btn")) return;
+    const el = ref.current;
+    if (!el) return;
 
-      const code = pre.querySelector("code")?.textContent ?? pre.textContent ?? "";
-
-      // Wrap pre in a relative container so the button doesn't scroll with code
-      const wrapper = document.createElement("div");
-      wrapper.className = "relative group";
-      pre.parentNode?.insertBefore(wrapper, pre);
-      wrapper.appendChild(pre);
-
-      const btn = document.createElement("button");
-      btn.className =
-        "copy-btn absolute top-2 right-2 text-[10px] font-mono border border-[#494847]/60 px-2 py-1 text-[#adaaaa] hover:text-primary hover:border-primary/40 transition-colors bg-[#0e0e0e] cursor-pointer opacity-0 group-hover:opacity-100";
-      btn.textContent = "COPY";
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        navigator.clipboard.writeText(code).then(() => {
-          const originalText = btn.textContent;
-          btn.textContent = "COPIED";
-          btn.classList.add("border-primary", "text-primary", "bg-primary/5", "animate-pulse");
-          
-          setTimeout(() => { 
-            btn.textContent = originalText;
-            btn.classList.remove("border-primary", "text-primary", "bg-primary/5", "animate-pulse");
-          }, 2000);
-        });
+    const handleCopy = (e: Event) => {
+      const btn = (e.target as Element).closest<HTMLButtonElement>(".copy-btn");
+      if (!btn) return;
+      const pre = btn.closest(".group")?.querySelector("pre");
+      const code = pre?.querySelector("code")?.textContent ?? pre?.textContent ?? "";
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = "COPIED";
+        btn.classList.add("border-primary", "text-primary", "bg-primary/5", "animate-pulse");
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove("border-primary", "text-primary", "bg-primary/5", "animate-pulse");
+        }, 2000);
       });
+    };
 
-      wrapper.appendChild(btn);
-    });
-  }, [html]);
+    el.addEventListener("click", handleCopy);
+    return () => el.removeEventListener("click", handleCopy);
+  }, []);
 
   return (
     <div className="relative flex flex-col lg:flex-row gap-12 mt-8">
@@ -106,25 +129,7 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
           </div>
           <nav className="space-y-4 border-l border-outline-variant/10">
             {headings.map((heading) => (
-              <a
-                key={heading.id}
-                href={`#${heading.id}`}
-                className={cn(
-                  "block text-[11px] font-mono transition-all duration-300 pl-4 border-l -ml-px hover:text-white",
-                  heading.level === 1 ? "font-bold" : "text-[#7e7e7e]",
-                  heading.level === 3 ? "pl-8" : "",
-                  activeId === heading.id 
-                    ? "text-primary border-primary font-bold" 
-                    : "border-transparent text-[#adaaaa]"
-                )}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById(heading.id)?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                {heading.level === 1 ? "> " : ""}
-                {heading.text}
-              </a>
+              <TocLink key={heading.id} heading={heading} activeId={activeId} />
             ))}
           </nav>
         </div>
@@ -142,25 +147,9 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
               {headings.length} sections found
             </div>
           </div>
-          <nav className="p-6 space-y-4 border-l border-outline-variant/10 ml-4 my-2">
+          <nav className="p-4 space-y-3">
             {headings.map((heading) => (
-              <a
-                key={`mobile-${heading.id}`}
-                href={`#${heading.id}`}
-                className={cn(
-                  "block text-[11px] font-mono transition-all duration-300 pl-4 border-l -ml-px hover:text-white border-transparent",
-                  heading.level === 1 ? "font-bold text-white" : "text-[#7e7e7e]",
-                  heading.level === 3 ? "pl-8" : "",
-                  "text-[#adaaaa]"
-                )}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById(heading.id)?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                {heading.level === 1 ? "> " : ""}
-                {heading.text}
-              </a>
+              <TocLink key={`mobile-${heading.id}`} heading={heading} mobile />
             ))}
           </nav>
         </div>
