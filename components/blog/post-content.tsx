@@ -139,22 +139,26 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
               {headings.length} sections found
             </div>
           </div>
-          <nav className="p-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+          <nav className="p-6 space-y-4 border-l border-outline-variant/10 ml-4 my-2">
             {headings.map((heading) => (
               <a
                 key={`mobile-${heading.id}`}
                 href={`#${heading.id}`}
                 className={cn(
-                  "text-[11px] font-mono transition-colors hover:text-primary flex items-start gap-2 group",
-                  heading.level === 1 ? "text-white font-bold" : "text-[#7e7e7e]"
+                  "block text-[11px] font-mono transition-all duration-300 pl-4 border-l -ml-px hover:text-white",
+                  heading.level === 1 ? "font-bold text-white" : "text-[#7e7e7e]",
+                  heading.level === 3 ? "pl-8" : "",
+                  activeId === heading.id 
+                    ? "text-primary border-primary font-bold" 
+                    : "border-transparent text-[#adaaaa]"
                 )}
                 onClick={(e) => {
                   e.preventDefault();
                   document.getElementById(heading.id)?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                <span className="text-primary/40 group-hover:text-primary transition-colors">→</span>
-                <span className="truncate">{heading.text}</span>
+                {heading.level === 1 ? "> " : ""}
+                {heading.text}
               </a>
             ))}
           </nav>
