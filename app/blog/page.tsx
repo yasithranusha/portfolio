@@ -25,7 +25,7 @@ function formatDate(dateStr: string): string {
 async function BlogStaticContent() {
   "use cache";
   cacheTag("posts");
-  cacheLife("days");
+  cacheLife("hours");
 
   const posts = await fetchPosts();
   const featured = posts.find((p) => p.featured) ?? posts[0];
