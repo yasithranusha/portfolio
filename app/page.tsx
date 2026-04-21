@@ -158,31 +158,35 @@ export default async function HomePage() {
             {recentPosts.length === 0 ? (
               <FallbackLogEntries />
             ) : (
-              recentPosts.map((post, i) => {
-                const levels = ["ARCHITECTURE", "BACKEND", "FRONTEND"] as const;
-                const levelColors = {
-                  ARCHITECTURE:  { badge: "bg-primary/10 text-primary",   border: "hover:border-primary",   title: "group-hover:text-primary" },
-                  BACKEND: { badge: "bg-tertiary/10 text-tertiary",  border: "hover:border-tertiary",  title: "group-hover:text-tertiary" },
-                  FRONTEND: { badge: "bg-error/10 text-error",        border: "hover:border-error",     title: "group-hover:text-error" },
+              recentPosts.map((post) => {
+                const getLevelConfig = (tag: string) => {
+                  const t = tag.toUpperCase();
+                  if (t.includes("BACKEND") || t.includes("DATABASE") || t.includes("NODE") || t.includes("SERVER") || t.includes("SPRING")) 
+                    return { level: t, badge: "bg-tertiary/10 text-tertiary", border: "hover:border-tertiary", title: "group-hover:text-tertiary" };
+                  if (t.includes("FRONTEND") || t.includes("UI") || t.includes("REACT") || t.includes("WEB") || t.includes("CSS")) 
+                    return { level: t, badge: "bg-error/10 text-error", border: "hover:border-error", title: "group-hover:text-error" };
+                  return { level: t, badge: "bg-primary/10 text-primary", border: "hover:border-primary", title: "group-hover:text-primary" };
                 };
-                const level = levels[i % 3];
-                const colors = levelColors[level];
+
+                const tag = post.tags[0] || "System";
+                const config = getLevelConfig(tag);
+
                 return (
                   <Link
                     key={post.id}
                     href={`/blog/${post.slug}`}
-                    className={`group flex flex-col md:flex-row md:items-center gap-4 bg-surface-container-low p-4 hover:bg-[#262626] transition-colors cursor-pointer border-l-2 border-transparent ${colors.border}`}
+                    className={`group flex flex-col md:flex-row md:items-center gap-4 bg-surface-container-low p-4 hover:bg-[#262626] transition-colors cursor-pointer border-l-2 border-transparent ${config.border}`}
                   >
                     <div className="flex items-start gap-4 md:contents">
                       <div className="flex-1 md:contents">
                         <div className="text-[10px] text-on-surface-variant font-mono min-w-[140px]">
                           [{post.date ? new Date(post.date).toISOString().replace("T", " ").slice(0, 16) : "----"}]
                         </div>
-                        <div className={`px-2 py-0.5 text-[10px] font-bold w-fit ${colors.badge}`}>
-                          {level}
+                        <div className={`px-2 py-0.5 text-[10px] font-bold w-fit ${config.badge}`}>
+                          {config.level}
                         </div>
                         <div className="flex-1">
-                          <h3 className={`text-sm font-bold text-on-surface uppercase transition-colors ${colors.title}`}>
+                          <h3 className={`text-sm font-bold text-on-surface uppercase transition-colors ${config.title}`}>
                             {post.title}
                           </h3>
                           {post.excerpt && (
