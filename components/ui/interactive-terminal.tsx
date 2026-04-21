@@ -21,6 +21,7 @@ export interface InteractiveTerminalProps {
   posts?: NotionPost[];
   className?: string;
   onBootComplete?: () => void;
+  typingSpeed?: number; // Speed of each character in ms
 }
 
 // ─── Component ───────────────────────────────────────────────────────
@@ -33,6 +34,7 @@ export function InteractiveTerminal({
   posts = [],
   className = "",
   onBootComplete,
+  typingSpeed = 38,
 }: InteractiveTerminalProps) {
   const [history,        setHistory]        = useState<HistoryEntry[]>(initialHistory ?? []);
   const [cwd,            setCwd]            = useState(initialCwd);
@@ -79,7 +81,7 @@ export function InteractiveTerminal({
         setTypingText("");
         for (let i = 1; i <= cmd.length; i++) {
           if (cancelled) return;
-          await wait(38);
+          await wait(typingSpeed);
           setTypingText(cmd.slice(0, i));
         }
         await wait(160);
@@ -161,8 +163,12 @@ export function InteractiveTerminal({
       className={`flex flex-col bg-black border border-[#494847]/20 font-mono text-xs overflow-hidden ${className}`}
       onClick={() => {
         if (ready) {
-          setHasInteracted(true);
-          inputRef.current?.focus();
+          // Only focus if the user isn't currently selecting text
+          const selection = window.getSelection();
+          if (!selection || selection.toString().length === 0) {
+            setHasInteracted(true);
+            inputRef.current?.focus();
+          }
         }
       }}
     >

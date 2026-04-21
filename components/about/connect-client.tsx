@@ -13,9 +13,10 @@ export function ConnectLayout({ sidePanel }: { sidePanel: React.ReactNode }) {
       <div className="flex flex-col lg:flex-row gap-6">
         <InteractiveTerminal
           title="CURL :: api/v1/identity"
-          initialCommands={[`curl ${siteConfig.domain}${siteConfig.terminal.identityEndpoint}`]}
+          initialCommands={[`curl https://${siteConfig.domain}${siteConfig.terminal.identityEndpoint}`]}
           className="h-[32rem] lg:h-auto lg:flex-[2] lg:min-h-0"
           onBootComplete={() => setCurled(true)}
+          typingSpeed={16}
         />
         {sidePanel}
       </div>

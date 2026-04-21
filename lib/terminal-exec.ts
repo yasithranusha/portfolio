@@ -75,21 +75,37 @@ const HOME_LS_LA: TerminalLine[] = [
   { text: "-rw-r--r--  1 root  staff  128  APR 15 2026  readme.md",          color: "text-on-surface" },
 ];
 
+const IDENTITY_DATA = {
+  handle:         siteConfig.handle,
+  name:           siteConfig.name,
+  role:           siteConfig.role,
+  status:         "online",
+  location:       "Sri Lanka / Remote",
+  open_to_work:   true,
+  specialization: [
+    "Full-Stack Development (Java / Node.js / React.js)",
+    "API Security (OAuth 2.0, JWT, Microsoft Entra ID)",
+    "Cloud-Native Systems (AWS, Azure, Docker, CI/CD)"
+  ],
+  stack: {
+    languages:  ["Java", "TypeScript", "JavaScript", "Python", "Go", "SQL"],
+    backend:    ["Spring Boot", "NestJS", "Node.js", "Fiber (Go)", "gRPC", "RabbitMQ"],
+    frontend:   ["React.js", "Next.js", "shadcn UI", "Tailwind CSS"],
+    databases:  ["PostgreSQL", "MySQL", "MongoDB", "Redis"],
+    cloud:      ["AWS", "Azure", "Docker", "GitHub Actions"]
+  },
+  contact: {
+    github:   siteConfig.socials.github,
+    linkedin: siteConfig.socials.linkedin,
+    email:    `hello@${siteConfig.domain}`,
+  },
+};
+
 const CURL_OUTPUT: TerminalLine[] = [
   { text: "  % Total    % Received  Xferd  Average  Speed   Time",  color: "text-[#494847]" },
-  { text: "100   842  100   842    0     0   9241      0  --:--:--", color: "text-on-surface-variant" },
+  { text: `100  ${JSON.stringify(IDENTITY_DATA).length}  100  ${JSON.stringify(IDENTITY_DATA).length}    0     0   9241      0  --:--:--`, color: "text-on-surface-variant" },
   { text: "" },
-  { text: "{", color: "text-on-surface-variant" },
-  { html: true, text: `  <span class="text-tertiary">"handle"</span>: <span class="text-secondary-fixed-dim">"${siteConfig.handle}"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"name"</span>: <span class="text-secondary-fixed-dim">"${siteConfig.name}"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"role"</span>: <span class="text-secondary-fixed-dim">"${siteConfig.role}"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"status"</span>: <span class="text-primary">"online"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"location"</span>: <span class="text-secondary-fixed-dim">"Sri Lanka / Remote"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"open_to_work"</span>: <span class="text-primary">true</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"stack"</span>: [<span class="text-secondary-fixed-dim">"Java"</span>, <span class="text-secondary-fixed-dim">"Spring Boot"</span>, <span class="text-secondary-fixed-dim">"TypeScript"</span>, <span class="text-secondary-fixed-dim">"React.js"</span>, <span class="text-secondary-fixed-dim">"AWS"</span>],` },
-  { html: true, text: `  <span class="text-tertiary">"github"</span>: <a href="${siteConfig.socials.github}" target="_blank" rel="noreferrer" class="text-secondary-fixed-dim hover:underline">"${siteConfig.socials.github}"</a>,` },
-  { html: true, text: `  <span class="text-tertiary">"linkedin"</span>: <a href="${siteConfig.socials.linkedin}" target="_blank" rel="noreferrer" class="text-secondary-fixed-dim hover:underline">"${siteConfig.socials.linkedin}"</a>` },
-  { text: "}", color: "text-on-surface-variant" },
+  ...renderJson(IDENTITY_DATA)
 ];
 
 const CURL_SUDO_OUTPUT: TerminalLine[] = [
@@ -97,18 +113,13 @@ const CURL_SUDO_OUTPUT: TerminalLine[] = [
   { text: "100   412  100   412    0     0   5330      0  --:--:--", color: "text-on-surface-variant" },
   { text: "< X-Elevated: root",                                      color: "text-[#494847]" },
   { text: "" },
-  { text: "{", color: "text-on-surface-variant" },
-  { html: true, text: `  <span class="text-tertiary">"status"</span>: <span class="text-primary">"GRANTED"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"elevated_to"</span>: <span class="text-primary">"root"</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"message"</span>: <span class="text-secondary-fixed-dim">"sudo access granted. with great power comes great responsibility."</span>,` },
-  { html: true, text: `  <span class="text-tertiary">"root_secrets"</span>: {` },
-  { html: true, text: `    <span class="text-tertiary">"editor"</span>: <span class="text-secondary-fixed-dim">"${siteConfig.sudo.root_secrets.editor}"</span>,` },
-  { html: true, text: `    <span class="text-tertiary">"coffee_dependency"</span>: <span class="text-error">"${siteConfig.sudo.root_secrets.coffee_dependency}"</span>,` },
-  { html: true, text: `    <span class="text-tertiary">"git_commits_at_2am"</span>: <span class="text-primary">${siteConfig.sudo.root_secrets.git_commits_at_2am}</span>,` },
-  { html: true, text: `    <span class="text-tertiary">"tdd"</span>: <span class="text-primary">${siteConfig.sudo.root_secrets.tdd}</span>` },
-  { html: true, text: `  },` },
-  { html: true, text: `  <span class="text-tertiary">"warning"</span>: <span class="text-error">"${siteConfig.sudo.warning}"</span>` },
-  { text: "}", color: "text-on-surface-variant" },
+  ...renderJson({
+    status: "GRANTED",
+    elevated_to: "root",
+    message: "sudo access granted. with great power comes great responsibility.",
+    root_secrets: siteConfig.sudo.root_secrets,
+    warning: siteConfig.sudo.warning
+  })
 ];
 
 const HELP_LINES: TerminalLine[] = [
@@ -125,6 +136,80 @@ const HELP_LINES: TerminalLine[] = [
 ];
 
 // ─── Pure helpers ─────────────────────────────────────────────────────
+
+/**
+ * Helper to format primitive values with syntax highlighting.
+ */
+function formatValue(val: any): string {
+  if (typeof val === "string") {
+    if (val.startsWith("http")) {
+      return `<a href="${val}" target="_blank" rel="noreferrer" class="text-secondary-fixed-dim hover:underline">"${escHtml(val)}"</a>`;
+    }
+    return `<span class="text-secondary-fixed-dim">"${escHtml(val)}"</span>`;
+  }
+  if (typeof val === "number") return `<span class="text-error">${val}</span>`;
+  if (typeof val === "boolean") return `<span class="text-primary">${val}</span>`;
+  if (val === null) return `<span class="text-outline">null</span>`;
+  return String(val);
+}
+
+/**
+ * Recursively renders an object as syntax-highlighted JSON terminal lines.
+ */
+function renderJson(obj: any, indent = 0): TerminalLine[] {
+  const lines: TerminalLine[] = [];
+  const space = "  ".repeat(indent);
+  const isArr = Array.isArray(obj);
+
+  // Special case: Single line arrays for primitives
+  if (isArr && obj.every(v => v === null || typeof v !== "object")) {
+    const content = obj.map(v => formatValue(v)).join(", ");
+    return [{
+      html: true,
+      text: `${space}[${content}]`
+    }];
+  }
+
+  lines.push({ text: isArr ? `${space}[` : `${space}{`, color: "text-on-surface-variant" });
+
+  const entries = Object.entries(obj);
+  entries.forEach(([key, val], i) => {
+    const isLast = i === entries.length - 1;
+    const comma = isLast ? "" : ",";
+    const keyPart = isArr ? "" : `<span class="text-tertiary">"${escHtml(key)}"</span>: `;
+
+    if (val !== null && typeof val === "object") {
+      // Check for compact array of primitives
+      if (Array.isArray(val) && val.every(v => v === null || typeof v !== "object")) {
+        lines.push({
+          html: true,
+          text: `${space}  ${keyPart}[${val.map(v => formatValue(v)).join(", ")}]${comma}`
+        });
+      } else {
+        const nested = renderJson(val, indent + 1);
+        // Inline the first line if it's a key-value pair
+        if (!isArr) {
+          nested[0].html = true;
+          nested[0].text = `  ${keyPart}${nested[0].text.trim()}`;
+        }
+        // Add indent to all lines of nested
+        nested.forEach((l, idx) => {
+          if (isArr || idx > 0) l.text = "  " + l.text;
+        });
+        nested[nested.length - 1].text += comma;
+        lines.push(...nested);
+      }
+    } else {
+      lines.push({
+        html: true,
+        text: `${space}  ${keyPart}${formatValue(val)}${comma}`
+      });
+    }
+  });
+
+  lines.push({ text: isArr ? `${space}]` : `${space}}`, color: "text-on-surface-variant" });
+  return lines;
+}
 
 function escHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

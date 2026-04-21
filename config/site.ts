@@ -3,7 +3,7 @@ export const siteConfig = {
   name: "Yasith Ranusha",
   email: "yasithranusha@gmail.com",
   role: "Full-Stack Software Engineer",
-  domain: "yasithranusha.me",
+  domain: "www.yasithranusha.me",
   branding: "YASITH.SYS",
   url: "https://www.yasithranusha.me/",
   tagline: [
