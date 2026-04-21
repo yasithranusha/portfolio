@@ -19,7 +19,7 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="pt-8 pb-24 px-6 md:px-12 min-h-screen">
+    <div className="flex flex-col gap-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

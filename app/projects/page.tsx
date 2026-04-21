@@ -13,9 +13,7 @@ export default async function ProjectsPage() {
   const projects = await fetchProjects();
   const online  = projects.filter((p) => p.status === "online").length;
   return (
-    <div className="mt-12 mb-10 p-4 sm:p-8 min-h-screen">
-      <div className="max-w-7xl mx-auto">
-
+    <div className="flex flex-col gap-12">
         {/* ─── Breadcrumb / Header ────────────────────────────────── */}
         <div className="mb-12">
           <div className="flex items-center gap-2 text-[10px] font-bold text-primary mb-2 opacity-80">
@@ -53,7 +51,6 @@ export default async function ProjectsPage() {
         {/* ─── Project Cards Grid ─────────────────────────────────── */}
         <ProjectGrid projects={projects} />
 
-      </div>
     </div>
   );
 }

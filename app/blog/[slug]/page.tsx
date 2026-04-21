@@ -91,7 +91,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div className="max-w-6xl mx-auto w-full">
       <ReadingProgress />
       <script
         type="application/ld+json"
@@ -139,7 +139,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       {/* Cover Image */}
       {post.cover && (
-        <div className="relative aspect-[3/1] mb-12 rounded-lg overflow-hidden border border-outline-variant/30 group">
+        <div className="relative aspect-[2.6/1] mb-12 rounded-lg overflow-hidden border border-outline-variant/30 group">
           <Image
             src={post.cover}
             alt={post.title}

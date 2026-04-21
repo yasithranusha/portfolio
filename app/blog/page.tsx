@@ -136,7 +136,7 @@ export default async function BlogPage({
   const allTags = Array.from(new Set(posts.flatMap((p) => p.tags)));
 
   return (
-    <div className="pt-12 pb-24 px-6 md:px-12 min-h-screen">
+    <div className="flex flex-col gap-12">
 
       {/* ─── Header ───────────────────────────────────────────────── */}
       <header className="py-12 border-b border-outline-variant/20">

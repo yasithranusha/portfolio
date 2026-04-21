@@ -20,7 +20,7 @@ export function Navbar() {
         </div>
         
         <div className="hidden sm:flex items-center gap-3">
-          <form 
+          {/* <form 
             action={siteConfig.socials.github} 
             target="_blank"
             className="flex items-center bg-[#262626] px-3 py-1 gap-2 border border-[#494847]/20"
@@ -33,7 +33,7 @@ export function Navbar() {
               type="text"
               name="q"
             />
-          </form>
+          </form> */}
           <Link href="/" title="Open Terminal">
             <Icon name="terminal" className="text-[#55fe7e] cursor-pointer hover:bg-[#262626] p-1 transition-colors text-sm flex items-center justify-center" />
           </Link>

@@ -98,9 +98,7 @@ export default function AboutPage() {
   );
 
   return (
-    <div className="mt-12 mb-10 p-8 min-h-screen">
-      <div className="max-w-5xl mx-auto">
-
+    <div className="flex flex-col gap-12">
         {/* ─── Breadcrumb / Header ─────────────────────────────────── */}
         <div className="mb-12">
           <div className="flex items-center gap-2 text-[10px] font-bold text-primary mb-2 opacity-80">
@@ -118,7 +116,6 @@ export default function AboutPage() {
         {/* ─── Terminal + Side Panel + System Log ──────────────────── */}
         <ConnectLayout sidePanel={sidePanel} />
 
-      </div>
     </div>
   );
 }

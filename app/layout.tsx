@@ -88,7 +88,11 @@ export default function RootLayout({
         <Navbar />
         <Sidebar />
         {/* Main canvas: sidebar offset on md+, top navbar offset, bottom footer offset */}
-        <main className="md:ml-64 pt-12 pb-10 min-h-screen">{children}</main>
+        <main className="md:ml-64 pt-12 md:pt-16 pb-12 px-6 md:px-12 min-h-screen flex justify-center">
+          <div className="w-full max-w-7xl">
+            {children}
+          </div>
+        </main>
         <Suspense><Footer /></Suspense>
         <Analytics />
         <SpeedInsights />
