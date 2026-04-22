@@ -92,7 +92,7 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
       window.removeEventListener("scroll", throttledScroll);
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -117,6 +117,40 @@ export function PostContent({ html, headings }: { html: string; headings: BlogHe
     el.addEventListener("click", handleCopy);
     return () => el.removeEventListener("click", handleCopy);
   }, []);
+
+  // Handle markdown image loading and skeleton removal
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const images = el.querySelectorAll<HTMLImageElement>('img[data-md-img="true"]');
+    
+    const onLoad = (img: HTMLImageElement) => {
+      // Find the sibling skeleton overlay
+      const skeleton = img.previousElementSibling;
+      if (skeleton && skeleton.classList.contains('skeleton-overlay')) {
+        skeleton.remove();
+      }
+      // Remove min-height from parent to let it shrink to actual image height
+      const parent = img.parentElement;
+      if (parent) {
+        parent.classList.remove('min-h-[250px]');
+      }
+      // Fade in the image
+      img.classList.remove("opacity-0", "invisible");
+      img.classList.add("opacity-100", "visible");
+    };
+
+    images.forEach(img => {
+      if (img.complete) {
+        onLoad(img);
+      } else {
+        img.addEventListener('load', () => onLoad(img));
+        // Add error handler fallback just in case
+        img.addEventListener('error', () => onLoad(img)); 
+      }
+    });
+  }, [html]);
 
   return (
     <div className="relative flex flex-col lg:flex-row gap-12 mt-8">

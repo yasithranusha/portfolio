@@ -9,7 +9,7 @@ export function PostList({ posts }: PostListProps) {
   if (!posts.length) {
     return (
       <div className="px-4 py-8 text-center font-mono text-sm text-outline">
-        // no entries found
+        {"// no entries found"}
       </div>
     );
   }

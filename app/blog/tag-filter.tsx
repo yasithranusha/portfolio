@@ -68,10 +68,10 @@ export function TagFilter({ posts, allTags, page, activeTag, query }: TagFilterP
 
       {/* Tag pills */}
       {allTags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex overflow-x-auto gap-2 pb-2 mb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href={buildUrl({ q: query })}
-            className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors ${
+            className={`shrink-0 snap-start text-[9px] font-mono border px-3 py-1 tracking-widest uppercase transition-colors whitespace-nowrap ${
               !activeTag
                 ? "border-primary/50 text-primary bg-primary/5"
                 : "border-outline-variant/40 text-outline hover:text-on-surface-variant"
@@ -83,7 +83,7 @@ export function TagFilter({ posts, allTags, page, activeTag, query }: TagFilterP
             <Link
               key={tag}
               href={buildUrl({ q: query, tag: activeTag === tag ? null : tag })}
-              className={`text-[9px] font-mono border px-2 py-0.5 tracking-widest uppercase transition-colors ${
+              className={`shrink-0 snap-start text-[9px] font-mono border px-3 py-1 tracking-widest uppercase transition-colors whitespace-nowrap ${
                 activeTag === tag
                   ? "border-tertiary/50 text-tertiary bg-tertiary/5"
                   : "border-outline-variant/40 text-outline hover:text-tertiary"

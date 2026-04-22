@@ -139,20 +139,34 @@ function rehypeHeadingCollector(headings: BlogHeading[]) {
   };
 }
 
-/**
- * Rehype plugin to wrap images in a styled div
- */
 function rehypeImageWrapper() {
   return (tree: HastRoot) => {
     visit(tree, "element", (node: Element, index: number | undefined, parent: HastParent | undefined) => {
       if (node.tagName === "img" && parent && index !== undefined) {
+        
+        node.properties = node.properties || {};
+        const existingClass = Array.isArray(node.properties.className) ? node.properties.className : [];
+        node.properties.className = [...existingClass, "transition-opacity", "duration-500", "opacity-0", "invisible"];
+        node.properties["data-md-img"] = "true";
+
+        const skeleton: Element = {
+          type: "element",
+          tagName: "div",
+          properties: {
+            // Same tailwind classes as the shadcn Skeleton component
+            className: ["animate-pulse", "bg-muted/10", "absolute", "inset-0", "z-10", "w-full", "h-full", "skeleton-overlay"]
+          },
+          children: []
+        };
+
         const wrapper: Element = {
           type: "element",
           tagName: "div",
           properties: {
-            className: ["my-8", "rounded-lg", "overflow-hidden", "border", "border-outline-variant/20"]
+            // Provide a min-height so the skeleton has volume while the image downloads 
+            className: ["relative", "my-8", "rounded-lg", "overflow-hidden", "border", "border-outline-variant/20", "min-h-[250px]", "w-full", "flex", "items-center", "justify-center"]
           },
-          children: [node]
+          children: [skeleton, node]
         };
         parent.children[index] = wrapper;
       }
